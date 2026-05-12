@@ -1,0 +1,33 @@
+spring:
+  application:
+    name: anyneeds
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 10MB
+  datasource:
+    url: jdbc:postgresql://localhost:5432/anyneeds
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+
+server:
+  port: 8080
+
+anyneeds:
+  jwt:
+    secret: anyneeds-secret-key-change-in-production-must-be-256-bits-long-enough
+    expiration-ms: 604800000  # 7 days
+  otp:
+    expiry-minutes: 10
+    length: 6
+  upload-dir: ${ANYNEEDS_UPLOAD_DIR:./uploads}
+  base-url: ${ANYNEEDS_BASE_URL:http://localhost:8080}
