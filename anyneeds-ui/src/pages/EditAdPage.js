@@ -221,7 +221,7 @@ export default function EditAdPage() {
                       <div key={i} className={`image-slot ${i === 0 ? 'image-slot-cover' : ''} ${i === 0 && fieldErrors.photo ? 'image-slot-error' : ''}`}>
                         {url ? (
                           <div className="image-preview">
-                            <img src={url} alt={`Photo ${i + 1}`} />
+                            <img src={url} alt={`Ad ${i + 1}`} />
                             <button type="button" className="remove-image-btn" onClick={() => removeImage(i)}>×</button>
                             {i === 0 && <span className="cover-badge">Cover</span>}
                           </div>

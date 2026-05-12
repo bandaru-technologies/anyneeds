@@ -3,10 +3,16 @@ import { Link, useNavigate } from 'react-router-dom';
 import CategoryGrid from '../components/CategoryGrid';
 import ListingCard from '../components/ListingCard';
 import { getCategories, getListings } from '../services/listingService';
-import { useGeoCity } from '../hooks/useGeoCity';
 import './HomePage.css';
 
-const POPULAR = ['Apartments in Hyderabad', 'Used Cars', 'iPhone for Sale', 'Jobs in Bangalore', 'PG in Mumbai'];
+const POPULAR = ['iPhone', 'Honda City', '2BHK Flat', 'Sofa', 'Laptop'];
+
+const CITIES = [
+  'Mumbai', 'Delhi', 'Bangalore', 'Hyderabad', 'Chennai',
+  'Kolkata', 'Pune', 'Ahmedabad', 'Jaipur', 'Lucknow',
+  'Surat', 'Kanpur', 'Nagpur', 'Indore', 'Bhopal',
+  'Visakhapatnam', 'Patna', 'Vadodara', 'Coimbatore', 'Kochi',
+];
 
 export default function HomePage() {
   const [categories, setCategories] = useState([]);
@@ -14,9 +20,7 @@ export default function HomePage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchCity, setSearchCity] = useState('');
   const [loading, setLoading] = useState(true);
-  const [cityDetected, setCityDetected] = useState(false);
   const navigate = useNavigate();
-  const { detecting, geoError, detect, autoDetect } = useGeoCity();
 
   useEffect(() => {
     Promise.all([getCategories(), getListings({ size: 8 })])
@@ -26,20 +30,13 @@ export default function HomePage() {
       })
       .catch(() => {})
       .finally(() => setLoading(false));
-
-    // Auto-detect if permission already granted (no prompt)
-    autoDetect((loc) => { setSearchCity(loc.display); setCityDetected(true); });
-  }, [autoDetect]);
-
-  const handleDetectCity = () => {
-    detect((loc) => { setSearchCity(loc.display); setCityDetected(true); });
-  };
+  }, []);
 
   const handleSearch = (e) => {
     e.preventDefault();
     const params = new URLSearchParams();
     if (searchQuery.trim()) params.set('keyword', searchQuery.trim());
-    if (searchCity.trim()) params.set('city', searchCity.trim());
+    if (searchCity) params.set('city', searchCity);
     navigate(`/listings?${params.toString()}`);
   };
 
@@ -48,77 +45,78 @@ export default function HomePage() {
       {/* Hero */}
       <section className="hero">
         <div className="container hero-inner">
-          <h1 className="hero-title">India's Most Trusted Classifieds Platform</h1>
-          <p className="hero-sub">Buy, sell, and find anything — real estate, cars, jobs and more</p>
+          <div className="hero-badge">
+            <span className="hero-badge-icon">⚡</span>
+            India's fastest growing marketplace
+          </div>
+
+          <h1 className="hero-title">
+            Buy, Sell &amp; <span className="hero-accent">Find Anything</span>
+            <br />Near You
+          </h1>
+          <p className="hero-sub">
+            AnyNeeds connects millions of buyers and sellers across India.<br />
+            Post your ad for free and start selling today.
+          </p>
 
           <form className="hero-search-bar" onSubmit={handleSearch}>
-            <div className="hero-city-wrap">
-              <button
-                type="button"
-                className={`hero-geo-btn ${detecting ? 'detecting' : ''} ${cityDetected ? 'detected' : ''}`}
-                onClick={handleDetectCity}
-                title={cityDetected ? `Detected: ${searchCity}` : 'Detect my location'}
-              >
-                {detecting ? <span className="geo-spin" /> : '📍'}
-              </button>
+            <div className="hero-search-keyword">
+              <svg className="hero-search-icon" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+              </svg>
               <input
-                className="hero-city-input"
+                className="hero-keyword-input"
                 type="text"
-                placeholder="City or area"
-                value={searchCity}
-                onChange={(e) => { setSearchCity(e.target.value); setCityDetected(false); }}
+                placeholder="Search for properties, cars, jobs, mobiles..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
               />
-              {searchCity && (
-                <button type="button" className="hero-city-clear" onClick={() => { setSearchCity(''); setCityDetected(false); }}>×</button>
-              )}
             </div>
-            <input
-              className="hero-search-input"
-              type="text"
-              placeholder="Search for properties, cars, jobs, mobiles..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-            <button className="hero-search-btn" type="submit">🔍 Search</button>
+            <div className="hero-city-select-wrap">
+              <svg className="hero-city-icon" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
+                <circle cx="12" cy="9" r="2.5"/>
+              </svg>
+              <select
+                className="hero-city-select"
+                value={searchCity}
+                onChange={(e) => setSearchCity(e.target.value)}
+              >
+                <option value="">All Cities</option>
+                {CITIES.map((c) => <option key={c} value={c}>{c}</option>)}
+              </select>
+            </div>
+            <button className="hero-search-btn" type="submit">
+              <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+              </svg>
+              Search
+            </button>
           </form>
-          {geoError && <p className="geo-error-msg">{geoError}</p>}
+
+          <div className="hero-popular">
+            <span className="popular-label">Popular:</span>
+            {POPULAR.map((p) => (
+              <Link key={p} to={`/listings?keyword=${encodeURIComponent(p)}`} className="popular-tag">{p}</Link>
+            ))}
+          </div>
 
           <div className="hero-stats">
-            <div className="stat"><strong>10L+</strong><span>Listings</span></div>
-            <div className="stat"><strong>50L+</strong><span>Users</span></div>
-            <div className="stat"><strong>500+</strong><span>Cities</span></div>
-            <div className="stat"><strong>Free</strong><span>to Post</span></div>
+            <div className="stat"><strong>2.5M+</strong><span>Active Listings</span></div>
+            <div className="stat"><strong>8M+</strong><span>Happy Users</span></div>
+            <div className="stat"><strong>500+</strong><span>Cities Covered</span></div>
+            <div className="stat"><strong>50K+</strong><span>Daily Deals</span></div>
           </div>
         </div>
       </section>
 
-      {/* Popular searches */}
-      <div className="popular-searches">
-        <div className="container">
-          <div className="popular-searches-inner">
-            <span className="popular-label">Popular:</span>
-            {POPULAR.map((p) => (
-              <Link
-                key={p}
-                to={`/listings?keyword=${encodeURIComponent(p)}`}
-                className="popular-tag"
-              >
-                {p}
-              </Link>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* Categories */}
       {loading ? (
         <div className="spinner" />
       ) : (
         <>
           <CategoryGrid categories={categories} />
 
-          {/* Recent Listings */}
-          <section className="section" style={{ background: '#f5f6f8' }}>
+          <section className="section">
             <div className="container">
               <div className="section-header">
                 <div className="section-title-line">
@@ -130,9 +128,7 @@ export default function HomePage() {
               {listings.length === 0 ? (
                 <div className="empty-state">
                   <p>No listings yet. Be the first to post an ad!</p>
-                  <Link to="/post-ad" className="btn btn-primary" style={{ marginTop: 16 }}>
-                    Post Free Ad
-                  </Link>
+                  <Link to="/post-ad" className="btn btn-primary" style={{ marginTop: 16 }}>Post Free Ad</Link>
                 </div>
               ) : (
                 <div className="listings-grid">
@@ -144,37 +140,15 @@ export default function HomePage() {
         </>
       )}
 
-      {/* Why AnyNeeds */}
-      <section className="why-section">
-        <div className="container">
-          <div className="why-grid">
-            {[
-              { icon: '🆓', title: 'Post for Free', desc: 'Post unlimited ads at no cost. No hidden charges ever.' },
-              { icon: '🔒', title: 'Safe & Secure', desc: 'OTP-verified users and phone number protection.' },
-              { icon: '⚡', title: 'Instant Reach', desc: 'Your ad goes live instantly across India.' },
-              { icon: '📱', title: 'Mobile App', desc: 'Available on iOS and Android for on-the-go access.' },
-            ].map((w) => (
-              <div key={w.title} className="why-card">
-                <div className="why-icon">{w.icon}</div>
-                <h3>{w.title}</h3>
-                <p>{w.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* CTA */}
       <section className="cta-section">
         <div className="container">
           <div className="cta-inner">
             <div className="cta-text">
               <h2>Have something to sell?</h2>
-              <p>Join millions of buyers and sellers on AnyNeeds.in — post your ad for free today</p>
+              <p>Join millions of buyers and sellers — post your ad for free today</p>
             </div>
-            <button className="cta-btn" onClick={() => navigate('/post-ad')}>
-              Post FREE Ad Now
-            </button>
+            <button className="cta-btn" onClick={() => navigate('/post-ad')}>+ Post Ad FREE</button>
           </div>
         </div>
       </section>

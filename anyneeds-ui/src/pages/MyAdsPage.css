@@ -1,112 +1,51 @@
-.my-ads-page {
-  background: var(--bg);
-  padding: 24px 0 60px;
-  min-height: calc(100vh - 60px);
+.my-ads-page { background: var(--bg); min-height: 100vh; padding: 32px 0 60px; }
+
+.my-ads-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 28px; }
+.my-ads-header .page-title { font-size: 22px; font-weight: 800; color: var(--text-primary); }
+
+.empty-state {
+  text-align: center; padding: 60px 20px;
+  background: var(--bg-card); border: 1px solid rgba(255,255,255,0.08);
+  border-radius: var(--radius);
+  color: var(--text-muted); font-size: 15px;
 }
 
-.my-ads-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 20px;
-}
-
-.my-ads-list {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
+.my-ads-list { display: flex; flex-direction: column; gap: 14px; }
 
 .my-ad-card {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  background: var(--bg-white);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 14px 16px;
-  transition: box-shadow 0.15s;
-  box-shadow: var(--shadow-sm);
+  display: flex; align-items: center; gap: 16px;
+  background: var(--bg-card);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: var(--radius); padding: 14px 18px;
+  transition: border-color 0.15s;
 }
-
-.my-ad-card:hover { box-shadow: var(--shadow-md); }
+.my-ad-card:hover { border-color: rgba(0,200,224,0.25); }
 
 .my-ad-img {
-  width: 110px;
-  height: 82px;
-  border-radius: var(--radius-sm);
-  overflow: hidden;
-  background: #f0f2f5;
-  flex-shrink: 0;
-  border: 1px solid var(--border);
+  width: 80px; height: 68px; border-radius: 8px; overflow: hidden;
+  flex-shrink: 0; background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
 }
-
 .my-ad-img img { width: 100%; height: 100%; object-fit: cover; }
-
-.my-ad-img-placeholder {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 28px;
-  opacity: 0.2;
-}
+.my-ad-img-placeholder { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 24px; opacity: 0.3; }
 
 .my-ad-info { flex: 1; min-width: 0; }
-
-.my-ad-category {
-  font-size: 10px;
-  font-weight: 700;
-  color: var(--primary);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin-bottom: 3px;
-}
-
-.my-ad-title {
-  font-size: 15px;
-  font-weight: 600;
-  color: var(--text-primary);
-  text-decoration: none;
-  display: block;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
+.my-ad-category { font-size: 10px; font-weight: 700; color: var(--primary); text-transform: uppercase; letter-spacing: 0.5px; }
+.my-ad-title { display: block; font-size: 14px; font-weight: 600; color: var(--text-primary); text-decoration: none; margin: 3px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .my-ad-title:hover { color: var(--primary); }
+.my-ad-price { font-size: 15px; font-weight: 800; color: var(--text-primary); margin: 0; }
+.my-ad-location { font-size: 12px; color: var(--text-muted); margin: 2px 0 0; }
 
-.my-ad-price {
-  font-size: 17px;
-  font-weight: 800;
-  color: var(--text-primary);
-  margin-top: 4px;
-}
+.my-ad-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; flex-wrap: wrap; justify-content: flex-end; }
 
-.my-ad-location {
-  font-size: 12px;
-  color: var(--text-muted);
-  margin-top: 2px;
-}
+.action-btn { font-size: 12px; padding: 6px 12px; }
 
-.my-ad-actions {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  align-items: flex-end;
-  flex-shrink: 0;
-}
-
-.action-btn {
-  font-size: 12px;
-  padding: 7px 14px;
-  min-width: 90px;
-  justify-content: center;
-}
+.badge { font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.3px; }
+.badge-active { background: rgba(0,200,224,0.12); color: var(--primary); border: 1px solid rgba(0,200,224,0.25); }
+.badge-sold { background: rgba(100,116,139,0.15); color: var(--text-muted); border: 1px solid rgba(100,116,139,0.2); }
+.badge-inactive { background: rgba(239,68,68,0.1); color: #ef4444; border: 1px solid rgba(239,68,68,0.2); }
 
 @media (max-width: 600px) {
   .my-ad-card { flex-wrap: wrap; }
-  .my-ad-img { width: 80px; height: 64px; }
-  .my-ad-actions { flex-direction: row; width: 100%; justify-content: flex-end; }
+  .my-ad-actions { width: 100%; justify-content: flex-start; margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.06); }
 }
