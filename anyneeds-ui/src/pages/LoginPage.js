@@ -80,8 +80,7 @@ export default function LoginPage() {
     <div className="login-page">
       <div className="login-card">
         <div className="login-logo">
-          <div className="login-logo-icon">AN</div>
-          <span className="login-logo-text">AnyNeeds<span>.in</span></span>
+          <img src="/salepe-logo.png" alt="Salepe.in" className="login-logo-img" />
         </div>
 
         {step === 'phone' ? (

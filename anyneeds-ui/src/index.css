@@ -4,18 +4,18 @@
   --primary-light: rgba(0,200,224,0.12);
   --header-bg: #07111e;
   --header-text: #ffffff;
-  --bg: #0d1b3e;
-  --bg-card: #142250;
-  --bg-white: #142250;
-  --bg-section: #0f1e45;
-  --text-primary: #f1f5f9;
-  --text-secondary: #94a3b8;
-  --text-muted: #64748b;
-  --border: rgba(255,255,255,0.1);
-  --border-light: rgba(255,255,255,0.06);
-  --shadow-sm: 0 1px 4px rgba(0,0,0,0.3);
-  --shadow-md: 0 4px 16px rgba(0,0,0,0.4);
-  --shadow-lg: 0 8px 32px rgba(0,0,0,0.5);
+  --bg: #f5f7fa;
+  --bg-card: #ffffff;
+  --bg-white: #ffffff;
+  --bg-section: #f0f4f8;
+  --text-primary: #1e293b;
+  --text-secondary: #475569;
+  --text-muted: #94a3b8;
+  --border: rgba(0,0,0,0.1);
+  --border-light: rgba(0,0,0,0.06);
+  --shadow-sm: 0 1px 4px rgba(0,0,0,0.08);
+  --shadow-md: 0 4px 16px rgba(0,0,0,0.1);
+  --shadow-lg: 0 8px 32px rgba(0,0,0,0.15);
   --radius-sm: 6px;
   --radius: 10px;
   --radius-lg: 14px;
@@ -87,8 +87,8 @@ input, textarea, select { font-family: inherit; }
 .input-field {
   width: 100%;
   padding: 11px 14px;
-  background: rgba(255,255,255,0.05);
-  border: 1px solid var(--border);
+  background: #fff;
+  border: 1px solid rgba(0,0,0,0.12);
   border-radius: var(--radius-sm);
   color: var(--text-primary);
   font-size: 14px;
@@ -98,10 +98,10 @@ input, textarea, select { font-family: inherit; }
 .input-field:focus {
   border-color: var(--primary);
   box-shadow: 0 0 0 3px rgba(0,200,224,0.15);
-  background: rgba(255,255,255,0.07);
+  background: #fff;
 }
 .input-field::placeholder { color: var(--text-muted); }
-.input-field option { background: #1a2f5e; color: var(--text-primary); }
+.input-field option { background: #fff; color: var(--text-primary); }
 
 /* Badges */
 .badge {

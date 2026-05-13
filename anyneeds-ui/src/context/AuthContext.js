@@ -5,7 +5,7 @@ const AuthContext = createContext(null);
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(() => {
     try {
-      const stored = localStorage.getItem('anyneeds_user');
+      const stored = localStorage.getItem('salepe_user');
       return stored ? JSON.parse(stored) : null;
     } catch {
       return null;
@@ -13,19 +13,19 @@ export function AuthProvider({ children }) {
   });
 
   const login = useCallback((token, userData) => {
-    localStorage.setItem('anyneeds_token', token);
-    localStorage.setItem('anyneeds_user', JSON.stringify(userData));
+    localStorage.setItem('salepe_token', token);
+    localStorage.setItem('salepe_user', JSON.stringify(userData));
     setUser(userData);
   }, []);
 
   const logout = useCallback(() => {
-    localStorage.removeItem('anyneeds_token');
-    localStorage.removeItem('anyneeds_user');
+    localStorage.removeItem('salepe_token');
+    localStorage.removeItem('salepe_user');
     setUser(null);
   }, []);
 
   const updateUser = useCallback((userData) => {
-    localStorage.setItem('anyneeds_user', JSON.stringify(userData));
+    localStorage.setItem('salepe_user', JSON.stringify(userData));
     setUser(userData);
   }, []);
 

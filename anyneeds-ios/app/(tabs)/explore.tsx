@@ -7,18 +7,29 @@ import { useRouter, useLocalSearchParams } from 'expo-router';
 import { listingApi } from '../../services/api';
 
 const C = {
-  bg: '#0a1628', card: '#162040', border: '#1e3060',
-  accent: '#00c8e0', text: '#fff', textSub: '#8899bb', textMuted: '#556080',
+  bg: '#f5f7fa', card: '#ffffff', border: 'rgba(0,0,0,0.09)',
+  accent: '#00c8e0', text: '#1e293b', textSub: '#475569', textMuted: '#94a3b8',
 };
+
+function fmtPrice(price: any) {
+  if (!price) return 'On Request';
+  return `₹${Number(price).toLocaleString('en-IN')}`;
+}
+
+function fmtLocation(l: any) {
+  if (l.location && l.city) return `${l.location}, ${l.city}`;
+  return l.city || l.location || 'India';
+}
 
 export default function ExploreScreen() {
   const router = useRouter();
-  const params = useLocalSearchParams<{ keyword?: string; categoryId?: string; categoryName?: string }>();
+  const params = useLocalSearchParams<{ keyword?: string; categoryId?: string }>();
 
   const [listings, setListings] = useState<any[]>([]);
   const [categories, setCategories] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [keyword, setKeyword] = useState(params.keyword || '');
+  const [area, setArea] = useState('');
   const [selectedCat, setSelectedCat] = useState<string>(params.categoryId || '');
   const [page, setPage] = useState(0);
   const [hasMore, setHasMore] = useState(false);
@@ -34,6 +45,7 @@ export default function ExploreScreen() {
       const p: any = { page: pg, size: 20 };
       if (selectedCat) p.categoryId = selectedCat;
       if (keyword) p.keyword = keyword;
+      if (area) p.area = area;
       const { data } = await listingApi.getListings(p);
       const items = data.content || [];
       setListings((prev) => (append ? [...prev, ...items] : items));
@@ -45,7 +57,7 @@ export default function ExploreScreen() {
     } finally {
       setLoading(false);
     }
-  }, [selectedCat, keyword]);
+  }, [selectedCat, keyword, area]);
 
   useEffect(() => {
     if (params.categoryId) setSelectedCat(params.categoryId);
@@ -54,11 +66,9 @@ export default function ExploreScreen() {
 
   useEffect(() => { fetchListings(0); }, [fetchListings]);
 
-  const handleSearch = () => fetchListings(0);
-
   return (
     <View style={s.container}>
-      {/* Search bar */}
+      {/* Search */}
       <View style={s.searchRow}>
         <TextInput
           style={s.searchInput}
@@ -66,16 +76,29 @@ export default function ExploreScreen() {
           placeholderTextColor={C.textMuted}
           value={keyword}
           onChangeText={setKeyword}
-          onSubmitEditing={handleSearch}
+          onSubmitEditing={() => fetchListings(0)}
           returnKeyType="search"
         />
-        <TouchableOpacity style={s.searchBtn} onPress={handleSearch}>
+        <TouchableOpacity style={s.searchBtn} onPress={() => fetchListings(0)}>
           <Text style={{ fontSize: 18 }}>🔍</Text>
         </TouchableOpacity>
       </View>
 
-      {/* Category filter */}
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={s.catRow}>
+      {/* Area filter */}
+      <View style={s.areaRow}>
+        <TextInput
+          style={s.areaInput}
+          placeholder="📍 Area / Locality (e.g. Whitefield)"
+          placeholderTextColor={C.textMuted}
+          value={area}
+          onChangeText={setArea}
+          onSubmitEditing={() => fetchListings(0)}
+          returnKeyType="search"
+        />
+      </View>
+
+      {/* Category chips */}
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ flexGrow: 0 }} contentContainerStyle={s.catRow}>
         <TouchableOpacity
           style={[s.catChip, !selectedCat && s.catChipActive]}
           onPress={() => setSelectedCat('')}
@@ -106,32 +129,30 @@ export default function ExploreScreen() {
           data={listings}
           keyExtractor={(l) => String(l.id)}
           numColumns={2}
-          columnWrapperStyle={{ paddingHorizontal: 12 }}
-          contentContainerStyle={{ paddingBottom: 80 }}
+          columnWrapperStyle={s.columnWrapper}
+          contentContainerStyle={{ paddingBottom: 80, paddingTop: 4 }}
           renderItem={({ item: l }) => (
             <TouchableOpacity
               style={s.listingCard}
               onPress={() => router.push(`/listing/${l.id}` as any)}
             >
               <View style={s.listingImg}>
-                <Text style={{ fontSize: 28, opacity: 0.25 }}>📷</Text>
+                <Text style={{ fontSize: 26, opacity: 0.2 }}>📷</Text>
               </View>
-              <View style={{ padding: 10 }}>
+              <View style={s.listingBody}>
                 <Text style={s.listingCat}>{l.categoryName}</Text>
-                <Text style={s.listingTitle} numberOfLines={2}>{l.title}</Text>
-                <Text style={s.listingPrice}>
-                  {l.price ? `₹${Number(l.price).toLocaleString('en-IN')}` : 'On Request'}
-                </Text>
-                <Text style={s.listingCity}>{l.city || 'India'}</Text>
+                <View style={s.titlePriceRow}>
+                  <Text style={s.listingTitle} numberOfLines={2}>{l.title}</Text>
+                  <Text style={s.listingPrice}>{fmtPrice(l.price)}</Text>
+                </View>
+                <Text style={s.listingCity} numberOfLines={1}>{fmtLocation(l)}</Text>
               </View>
             </TouchableOpacity>
           )}
           ListEmptyComponent={
             <View style={s.empty}>
-              <Text style={{ fontSize: 40 }}>🔍</Text>
-              <Text style={{ color: C.textSub, fontSize: 14, marginTop: 12 }}>
-                No listings found
-              </Text>
+              <Text style={{ fontSize: 36 }}>🔍</Text>
+              <Text style={{ color: C.textSub, fontSize: 14, marginTop: 12 }}>No listings found</Text>
             </View>
           }
           onEndReached={hasMore ? () => fetchListings(page + 1, true) : undefined}
@@ -144,31 +165,40 @@ export default function ExploreScreen() {
 
 const s = StyleSheet.create({
   container: { flex: 1, backgroundColor: C.bg },
-  searchRow: { flexDirection: 'row', gap: 8, padding: 12, paddingTop: 16 },
+  searchRow: { flexDirection: 'row', gap: 8, padding: 12, paddingTop: 14, paddingBottom: 6 },
   searchInput: {
-    flex: 1, backgroundColor: C.card, borderWidth: 1.5, borderColor: C.border,
+    flex: 1, backgroundColor: C.card, borderWidth: 1, borderColor: C.border,
     borderRadius: 10, paddingHorizontal: 14, paddingVertical: 10, color: C.text, fontSize: 14,
   },
   searchBtn: {
     backgroundColor: C.accent, borderRadius: 10, width: 46, alignItems: 'center', justifyContent: 'center',
   },
-  catRow: { paddingHorizontal: 12, gap: 8, paddingBottom: 10 },
+  areaRow: { paddingHorizontal: 12, paddingBottom: 8 },
+  areaInput: {
+    backgroundColor: C.card, borderWidth: 1, borderColor: C.border,
+    borderRadius: 10, paddingHorizontal: 14, paddingVertical: 9, color: C.text, fontSize: 13,
+  },
+  catRow: { paddingHorizontal: 12, gap: 8, paddingBottom: 10, alignItems: 'center' },
   catChip: {
     paddingHorizontal: 12, paddingVertical: 6, borderRadius: 20,
-    borderWidth: 1.5, borderColor: C.border, backgroundColor: C.card,
+    borderWidth: 1, borderColor: C.border, backgroundColor: C.card,
+    alignSelf: 'flex-start', height: 34, justifyContent: 'center',
   },
-  catChipActive: { borderColor: C.accent, backgroundColor: 'rgba(0,200,224,0.12)' },
+  catChipActive: { borderColor: C.accent, backgroundColor: 'rgba(0,200,224,0.08)' },
   catChipText: { fontSize: 12, color: C.textSub, fontWeight: '600' },
   catChipTextActive: { color: C.accent },
-  resultCount: { fontSize: 12, color: C.textMuted, paddingHorizontal: 16, marginBottom: 8 },
+  resultCount: { fontSize: 12, color: C.textMuted, paddingHorizontal: 14, marginBottom: 6 },
+  columnWrapper: { paddingHorizontal: 10, gap: 10 },
   listingCard: {
-    flex: 1, margin: '1.5%', backgroundColor: C.card,
+    flex: 1, maxWidth: '50%', backgroundColor: C.card,
     borderWidth: 1, borderColor: C.border, borderRadius: 12, overflow: 'hidden',
   },
-  listingImg: { height: 100, backgroundColor: C.bg, alignItems: 'center', justifyContent: 'center' },
+  listingImg: { height: 96, backgroundColor: '#f0f4f8', alignItems: 'center', justifyContent: 'center' },
+  listingBody: { padding: 10 },
   listingCat: { fontSize: 9, color: C.accent, fontWeight: '700', textTransform: 'uppercase' },
-  listingTitle: { fontSize: 12, fontWeight: '600', color: C.text, marginTop: 2 },
-  listingPrice: { fontSize: 13, fontWeight: '800', color: C.accent, marginTop: 3 },
-  listingCity: { fontSize: 10, color: C.textMuted, marginTop: 2 },
+  titlePriceRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', gap: 4, marginTop: 2 },
+  listingTitle: { fontSize: 12, fontWeight: '600', color: C.text, flex: 1 },
+  listingPrice: { fontSize: 12, fontWeight: '800', color: C.text, flexShrink: 0 },
+  listingCity: { fontSize: 10, color: C.textMuted, marginTop: 4 },
   empty: { alignItems: 'center', paddingTop: 60 },
 });

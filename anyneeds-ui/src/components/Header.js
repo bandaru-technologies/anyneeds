@@ -14,8 +14,7 @@ export default function Header() {
     <header className="header">
       <div className="container header-inner">
         <Link to="/" className="logo">
-          <div className="logo-icon">AN</div>
-          <span className="logo-text">AnyNeeds<span className="logo-dot">.in</span></span>
+          <img src="/salepe-logo.png" alt="Salepe.in" className="logo-img" />
         </Link>
 
         <nav className="nav-links">

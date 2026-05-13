@@ -1,26 +1,26 @@
 .listing-card {
   display: flex; flex-direction: column;
   background: var(--bg-card);
-  border: 1px solid rgba(255,255,255,0.08);
+  border: 1px solid rgba(0,0,0,0.08);
   border-radius: var(--radius); overflow: hidden;
   text-decoration: none; color: inherit;
   transition: all 0.18s ease;
 }
 .listing-card:hover {
-  border-color: rgba(0,200,224,0.3);
-  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+  border-color: rgba(0,200,224,0.4);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.1);
   transform: translateY(-2px); color: inherit;
 }
 .listing-img {
   position: relative; width: 100%; aspect-ratio: 16/10;
-  overflow: hidden; background: rgba(255,255,255,0.04);
+  overflow: hidden; background: rgba(0,0,0,0.04);
 }
 .listing-img img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s ease; }
 .listing-card:hover .listing-img img { transform: scale(1.04); }
 .listing-img-placeholder {
   width: 100%; height: 100%;
   display: flex; align-items: center; justify-content: center;
-  font-size: 36px; opacity: 0.15;
+  font-size: 36px; opacity: 0.2;
 }
 .listing-status { position: absolute; top: 8px; left: 8px; }
 .listing-body { padding: 10px 12px; flex: 1; display: flex; flex-direction: column; gap: 2px; }
@@ -37,7 +37,7 @@
 .listing-meta {
   display: flex; justify-content: space-between;
   margin-top: 8px; padding-top: 8px;
-  border-top: 1px solid rgba(255,255,255,0.06);
+  border-top: 1px solid rgba(0,0,0,0.06);
   font-size: 11px; color: var(--text-muted);
 }
 .listing-location::before { content: '📍 '; }

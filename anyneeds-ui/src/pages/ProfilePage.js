@@ -47,7 +47,7 @@ export default function ProfilePage() {
               <div className="profile-avatar-large">
                 {(user?.name || user?.phoneNumber || 'U')[0].toUpperCase()}
               </div>
-              <p className="profile-sidebar-name">{user?.name || 'AnyNeeds User'}</p>
+              <p className="profile-sidebar-name">{user?.name || 'Salepe User'}</p>
               <p className="profile-sidebar-phone">+91 {user?.phoneNumber}</p>
             </div>
             <nav className="profile-sidebar-nav">

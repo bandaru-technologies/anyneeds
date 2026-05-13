@@ -22,17 +22,14 @@
   flex-shrink: 0;
 }
 
-.logo-icon {
-  width: 36px;
-  height: 36px;
-  background: var(--primary);
-  color: #07111e;
-  font-weight: 900;
-  font-size: 13px;
+.logo-img {
+  height: 38px;
+  width: auto;
+  max-width: 140px;
+  object-fit: contain;
+  background: #fff;
+  padding: 5px 12px;
   border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 .logo-text {
@@ -128,11 +125,11 @@
   position: absolute;
   top: calc(100% + 8px);
   right: 0;
-  background: #1a2f5e;
-  border: 1px solid var(--border);
+  background: #fff;
+  border: 1px solid rgba(0,0,0,0.1);
   border-radius: var(--radius-sm);
   min-width: 170px;
-  box-shadow: var(--shadow-lg);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.15);
   overflow: hidden;
   z-index: 200;
 }
@@ -150,9 +147,9 @@
   cursor: pointer;
   transition: background 0.12s;
 }
-.dropdown-item:hover { background: rgba(255,255,255,0.06); color: var(--text-primary); }
-.dropdown-logout { color: #ef4444; border-top: 1px solid var(--border); }
-.dropdown-logout:hover { background: rgba(239,68,68,0.1); }
+.dropdown-item:hover { background: rgba(0,0,0,0.04); color: var(--text-primary); }
+.dropdown-logout { color: #ef4444; border-top: 1px solid rgba(0,0,0,0.08); }
+.dropdown-logout:hover { background: rgba(239,68,68,0.06); }
 
 .btn-white {
   background: transparent;

@@ -8,9 +8,9 @@ import { useAuth } from '../../context/AuthContext';
 import { authApi } from '../../services/api';
 
 const C = {
-  bg: '#0a1628', card: '#162040', border: '#1e3060',
-  accent: '#00c8e0', text: '#fff', textSub: '#8899bb', textMuted: '#556080',
-  error: '#ff5252', success: '#00e676',
+  bg: '#f5f7fa', card: '#ffffff', border: 'rgba(0,0,0,0.09)',
+  accent: '#00c8e0', text: '#1e293b', textSub: '#475569', textMuted: '#94a3b8',
+  error: '#ef4444', success: '#22c55e',
 };
 
 export default function ProfileScreen() {
@@ -23,13 +23,11 @@ export default function ProfileScreen() {
 
   if (!isLoggedIn) {
     return (
-      <View style={[s.container, { justifyContent: 'center', alignItems: 'center' }]}>
+      <View style={[s.container, { justifyContent: 'center', alignItems: 'center', padding: 32 }]}>
         <Text style={{ fontSize: 48, marginBottom: 16 }}>👤</Text>
-        <Text style={{ color: C.text, fontSize: 18, fontWeight: '700', marginBottom: 8 }}>
-          Login to AnyNeeds
-        </Text>
-        <Text style={{ color: C.textSub, fontSize: 14, marginBottom: 28, textAlign: 'center' }}>
-          Login to post ads, track your listings, and more
+        <Text style={{ color: C.text, fontSize: 18, fontWeight: '700', marginBottom: 8 }}>Login to AnyNeeds</Text>
+        <Text style={{ color: C.textSub, fontSize: 14, marginBottom: 28, textAlign: 'center', lineHeight: 20 }}>
+          Login to post ads, track your listings, and manage your account
         </Text>
         <TouchableOpacity style={s.primaryBtn} onPress={() => router.push('/login' as any)}>
           <Text style={s.primaryBtnText}>Login with Mobile OTP</Text>
@@ -53,7 +51,7 @@ export default function ProfileScreen() {
   };
 
   const handleLogout = () => {
-    Alert.alert('Logout', 'Are you sure you want to logout?', [
+    Alert.alert('Logout', 'Are you sure?', [
       { text: 'Cancel', style: 'cancel' },
       { text: 'Logout', style: 'destructive', onPress: logout },
     ]);
@@ -61,6 +59,7 @@ export default function ProfileScreen() {
 
   return (
     <ScrollView style={s.container} showsVerticalScrollIndicator={false}>
+      {/* Header */}
       <View style={s.profileHeader}>
         <View style={s.avatar}>
           <Text style={s.avatarText}>
@@ -71,52 +70,34 @@ export default function ProfileScreen() {
         <Text style={s.profilePhone}>+91 {user?.phoneNumber}</Text>
       </View>
 
+      {/* Edit profile */}
       <View style={s.card}>
         <Text style={s.cardTitle}>Edit Profile</Text>
 
         <Text style={s.label}>Full Name</Text>
-        <TextInput
-          style={s.input}
-          placeholder="Your full name"
-          placeholderTextColor={C.textMuted}
-          value={name}
-          onChangeText={setName}
-        />
+        <TextInput style={s.input} placeholder="Your full name" placeholderTextColor={C.textMuted} value={name} onChangeText={setName} />
 
         <Text style={s.label}>Email Address</Text>
-        <TextInput
-          style={s.input}
-          placeholder="your@email.com"
-          placeholderTextColor={C.textMuted}
-          value={email}
-          onChangeText={setEmail}
-          keyboardType="email-address"
-        />
+        <TextInput style={s.input} placeholder="your@email.com" placeholderTextColor={C.textMuted} value={email} onChangeText={setEmail} keyboardType="email-address" />
 
         <Text style={s.label}>Mobile Number</Text>
-        <TextInput
-          style={[s.input, { opacity: 0.5 }]}
-          value={`+91 ${user?.phoneNumber}`}
-          editable={false}
-        />
+        <TextInput style={[s.input, { opacity: 0.5 }]} value={`+91 ${user?.phoneNumber}`} editable={false} />
 
-        {saved && (
-          <Text style={{ color: C.success, fontSize: 13, marginBottom: 12 }}>
-            Profile saved successfully!
-          </Text>
-        )}
+        {saved && <Text style={{ color: C.success, fontSize: 13, marginBottom: 12 }}>✓ Profile saved successfully!</Text>}
 
         <TouchableOpacity style={s.primaryBtn} onPress={handleSave} disabled={loading}>
-          <Text style={s.primaryBtnText}>{loading ? 'Saving...' : 'Save Profile'}</Text>
+          <Text style={s.primaryBtnText}>{loading ? 'Saving...' : 'Save Changes'}</Text>
         </TouchableOpacity>
       </View>
 
+      {/* Menu */}
       <View style={s.card}>
         <TouchableOpacity style={s.menuItem} onPress={() => router.push('/my-ads' as any)}>
           <Text style={s.menuItemText}>📋  My Ads</Text>
-          <Text style={{ color: C.accent }}>→</Text>
+          <Text style={{ color: C.accent, fontSize: 16 }}>→</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={[s.menuItem, { borderTopWidth: 1, borderTopColor: C.border }]} onPress={handleLogout}>
+        <View style={s.menuDivider} />
+        <TouchableOpacity style={s.menuItem} onPress={handleLogout}>
           <Text style={[s.menuItemText, { color: C.error }]}>🚪  Logout</Text>
         </TouchableOpacity>
       </View>
@@ -128,28 +109,32 @@ export default function ProfileScreen() {
 
 const s = StyleSheet.create({
   container: { flex: 1, backgroundColor: C.bg },
-  profileHeader: { alignItems: 'center', padding: 28, paddingBottom: 20 },
+  profileHeader: {
+    backgroundColor: '#07111e', alignItems: 'center',
+    padding: 28, paddingTop: 32, paddingBottom: 28,
+  },
   avatar: {
-    width: 80, height: 80, borderRadius: 40, backgroundColor: C.accent,
+    width: 72, height: 72, borderRadius: 36,
+    backgroundColor: 'rgba(0,200,224,0.15)', borderWidth: 2, borderColor: 'rgba(0,200,224,0.3)',
     alignItems: 'center', justifyContent: 'center', marginBottom: 12,
   },
-  avatarText: { fontSize: 36, fontWeight: '800', color: '#000' },
-  profileName: { fontSize: 22, fontWeight: '700', color: C.text },
-  profilePhone: { fontSize: 14, color: C.textSub, marginTop: 4 },
+  avatarText: { fontSize: 30, fontWeight: '800', color: '#00c8e0' },
+  profileName: { fontSize: 20, fontWeight: '700', color: '#fff' },
+  profilePhone: { fontSize: 13, color: 'rgba(255,255,255,0.6)', marginTop: 4 },
+
   card: {
     backgroundColor: C.card, borderWidth: 1, borderColor: C.border,
-    borderRadius: 16, padding: 20, marginHorizontal: 16, marginBottom: 16,
+    borderRadius: 14, padding: 18, marginHorizontal: 14, marginTop: 14,
   },
-  cardTitle: { fontSize: 15, fontWeight: '700', color: C.text, marginBottom: 16 },
-  label: { fontSize: 12, fontWeight: '600', color: C.textSub, marginBottom: 6 },
+  cardTitle: { fontSize: 14, fontWeight: '700', color: C.text, marginBottom: 16 },
+  label: { fontSize: 11, fontWeight: '700', color: C.textMuted, textTransform: 'uppercase', letterSpacing: 0.4, marginBottom: 6 },
   input: {
-    backgroundColor: '#0f1e3a', borderWidth: 1.5, borderColor: C.border,
+    backgroundColor: '#f8fafc', borderWidth: 1, borderColor: 'rgba(0,0,0,0.1)',
     borderRadius: 8, padding: 12, color: C.text, fontSize: 14, marginBottom: 14,
   },
-  primaryBtn: {
-    backgroundColor: C.accent, borderRadius: 10, paddingVertical: 14, alignItems: 'center',
-  },
-  primaryBtnText: { color: '#000', fontWeight: '700', fontSize: 15 },
-  menuItem: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 14 },
+  primaryBtn: { backgroundColor: C.accent, borderRadius: 10, paddingVertical: 13, alignItems: 'center' },
+  primaryBtnText: { color: '#07111e', fontWeight: '700', fontSize: 15 },
+  menuItem: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 13 },
   menuItemText: { fontSize: 15, color: C.text, fontWeight: '500' },
+  menuDivider: { height: 1, backgroundColor: C.border },
 });

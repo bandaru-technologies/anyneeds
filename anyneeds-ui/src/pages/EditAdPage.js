@@ -6,7 +6,7 @@ import { CITIES, lookupState } from '../data/cityStateMap';
 import { useGeoCity } from '../hooks/useGeoCity';
 import LocationAutocomplete from '../components/LocationAutocomplete';
 import api from '../services/api';
-import './PostAdPage.css';
+import './EditAdPage.css';
 
 const GRID_SIZE = 5;
 const toGrid = (urls) => Array.from({ length: GRID_SIZE }, (_, i) => (urls && urls[i]) ? urls[i] : '');

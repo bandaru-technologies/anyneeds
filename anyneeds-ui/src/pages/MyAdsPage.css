@@ -5,7 +5,7 @@
 
 .empty-state {
   text-align: center; padding: 60px 20px;
-  background: var(--bg-card); border: 1px solid rgba(255,255,255,0.08);
+  background: var(--bg-card); border: 1px solid rgba(0,0,0,0.08);
   border-radius: var(--radius);
   color: var(--text-muted); font-size: 15px;
 }
@@ -15,19 +15,19 @@
 .my-ad-card {
   display: flex; align-items: center; gap: 16px;
   background: var(--bg-card);
-  border: 1px solid rgba(255,255,255,0.08);
+  border: 1px solid rgba(0,0,0,0.08);
   border-radius: var(--radius); padding: 14px 18px;
   transition: border-color 0.15s;
 }
-.my-ad-card:hover { border-color: rgba(0,200,224,0.25); }
+.my-ad-card:hover { border-color: rgba(0,200,224,0.3); box-shadow: var(--shadow-sm); }
 
 .my-ad-img {
   width: 80px; height: 68px; border-radius: 8px; overflow: hidden;
-  flex-shrink: 0; background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(255,255,255,0.08);
+  flex-shrink: 0; background: rgba(0,0,0,0.04);
+  border: 1px solid rgba(0,0,0,0.08);
 }
 .my-ad-img img { width: 100%; height: 100%; object-fit: cover; }
-.my-ad-img-placeholder { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 24px; opacity: 0.3; }
+.my-ad-img-placeholder { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 24px; opacity: 0.25; }
 
 .my-ad-info { flex: 1; min-width: 0; }
 .my-ad-category { font-size: 10px; font-weight: 700; color: var(--primary); text-transform: uppercase; letter-spacing: 0.5px; }
@@ -41,11 +41,11 @@
 .action-btn { font-size: 12px; padding: 6px 12px; }
 
 .badge { font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.3px; }
-.badge-active { background: rgba(0,200,224,0.12); color: var(--primary); border: 1px solid rgba(0,200,224,0.25); }
-.badge-sold { background: rgba(100,116,139,0.15); color: var(--text-muted); border: 1px solid rgba(100,116,139,0.2); }
-.badge-inactive { background: rgba(239,68,68,0.1); color: #ef4444; border: 1px solid rgba(239,68,68,0.2); }
+.badge-active { background: rgba(0,200,224,0.1); color: #0099b0; border: 1px solid rgba(0,200,224,0.25); }
+.badge-sold { background: rgba(100,116,139,0.1); color: var(--text-muted); border: 1px solid rgba(100,116,139,0.2); }
+.badge-inactive { background: rgba(239,68,68,0.08); color: #ef4444; border: 1px solid rgba(239,68,68,0.2); }
 
 @media (max-width: 600px) {
   .my-ad-card { flex-wrap: wrap; }
-  .my-ad-actions { width: 100%; justify-content: flex-start; margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.06); }
+  .my-ad-actions { width: 100%; justify-content: flex-start; margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(0,0,0,0.06); }
 }

@@ -7,8 +7,9 @@ import { useRouter } from 'expo-router';
 import { listingApi } from '../../services/api';
 
 const C = {
-  bg: '#0a1628', card: '#162040', border: '#1e3060',
-  accent: '#00c8e0', text: '#fff', textSub: '#8899bb', textMuted: '#556080',
+  bg: '#f5f7fa', card: '#ffffff', border: 'rgba(0,0,0,0.09)',
+  accent: '#00c8e0', accentDark: '#00a8be',
+  text: '#1e293b', textSub: '#475569', textMuted: '#94a3b8',
 };
 
 const CATEGORIES = [
@@ -30,6 +31,16 @@ const CATEGORIES = [
   { slug: 'others', emoji: '📦', name: 'Others' },
 ];
 
+function fmtPrice(price: any) {
+  if (!price) return 'On Request';
+  return `₹${Number(price).toLocaleString('en-IN')}`;
+}
+
+function fmtLocation(l: any) {
+  if (l.location && l.city) return `${l.location}, ${l.city}`;
+  return l.city || l.location || 'India';
+}
+
 export default function HomeScreen() {
   const router = useRouter();
   const [search, setSearch] = useState('');
@@ -39,7 +50,7 @@ export default function HomeScreen() {
 
   useEffect(() => {
     Promise.all([
-      listingApi.getListings({ size: 10 }),
+      listingApi.getListings({ size: 20 }),
       listingApi.getCategories(),
     ]).then(([lr, cr]) => {
       setListings(lr.data.content || []);
@@ -62,79 +73,90 @@ export default function HomeScreen() {
 
   return (
     <ScrollView style={s.container} showsVerticalScrollIndicator={false}>
-      <View style={s.header}>
-        <Text style={s.logo}>AnyNeeds<Text style={{ color: C.accent }}>.in</Text></Text>
-        <Text style={s.logoSub}>Buy & Sell Anything Near You</Text>
-      </View>
+      {/* Hero */}
+      <View style={s.hero}>
+        <Text style={s.heroTitle}>
+          AnyNeeds<Text style={{ color: C.accent }}>.in</Text>
+        </Text>
+        <Text style={s.heroSub}>Buy, Sell &amp; Find Anything Near You</Text>
 
-      <View style={s.searchRow}>
-        <TextInput
-          style={s.searchInput}
-          placeholder="Search cars, mobiles, jobs..."
-          placeholderTextColor={C.textMuted}
-          value={search}
-          onChangeText={setSearch}
-          onSubmitEditing={handleSearch}
-          returnKeyType="search"
-        />
-        <TouchableOpacity style={s.searchBtn} onPress={handleSearch}>
-          <Text style={{ fontSize: 18 }}>🔍</Text>
-        </TouchableOpacity>
-      </View>
-
-      <Text style={s.sectionTitle}>Browse Categories</Text>
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={s.catRow}>
-        {CATEGORIES.map((cat) => (
-          <TouchableOpacity key={cat.slug} style={s.catCard} onPress={() => handleCategory(cat.slug)}>
-            <Text style={s.catEmoji}>{cat.emoji}</Text>
-            <Text style={s.catName}>{cat.name}</Text>
-          </TouchableOpacity>
-        ))}
-      </ScrollView>
-
-      <View style={s.sectionHeader}>
-        <Text style={s.sectionTitle}>Fresh Arrivals</Text>
-        <TouchableOpacity onPress={() => router.push('/(tabs)/explore' as any)}>
-          <Text style={{ color: C.accent, fontSize: 13, fontWeight: '600' }}>View All →</Text>
-        </TouchableOpacity>
-      </View>
-
-      {loading ? (
-        <ActivityIndicator color={C.accent} style={{ marginVertical: 20 }} />
-      ) : listings.length === 0 ? (
-        <View style={s.empty}>
-          <Text style={{ color: C.textSub, fontSize: 14, marginBottom: 16 }}>No listings yet. Be the first!</Text>
-          <TouchableOpacity style={s.ctaBtn} onPress={() => router.push('/post-ad' as any)}>
-            <Text style={s.ctaBtnText}>Post Free Ad</Text>
+        <View style={s.searchRow}>
+          <TextInput
+            style={s.searchInput}
+            placeholder="Search cars, mobiles, jobs..."
+            placeholderTextColor="rgba(255,255,255,0.5)"
+            value={search}
+            onChangeText={setSearch}
+            onSubmitEditing={handleSearch}
+            returnKeyType="search"
+          />
+          <TouchableOpacity style={s.searchBtn} onPress={handleSearch}>
+            <Text style={{ fontSize: 18 }}>🔍</Text>
           </TouchableOpacity>
         </View>
-      ) : (
-        <View style={s.grid}>
-          {listings.map((l) => (
-            <TouchableOpacity
-              key={l.id} style={s.listingCard}
-              onPress={() => router.push(`/listing/${l.id}` as any)}
-            >
-              <View style={s.listingImg}>
-                <Text style={{ fontSize: 32, opacity: 0.3 }}>📷</Text>
-              </View>
-              <View style={{ padding: 10 }}>
-                <Text style={s.listingCat}>{l.categoryName}</Text>
-                <Text style={s.listingTitle} numberOfLines={2}>{l.title}</Text>
-                <Text style={s.listingPrice}>
-                  {l.price ? `₹${Number(l.price).toLocaleString('en-IN')}` : 'Price on Request'}
-                </Text>
-                <Text style={s.listingCity}>{l.city || 'India'}</Text>
-              </View>
+      </View>
+
+      {/* Categories */}
+      <View style={s.section}>
+        <Text style={s.sectionTitle}>Browse Categories</Text>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={s.catRow}>
+          {CATEGORIES.map((cat) => (
+            <TouchableOpacity key={cat.slug} style={s.catCard} onPress={() => handleCategory(cat.slug)}>
+              <Text style={s.catEmoji}>{cat.emoji}</Text>
+              <Text style={s.catName}>{cat.name}</Text>
             </TouchableOpacity>
           ))}
-        </View>
-      )}
+        </ScrollView>
+      </View>
 
+      {/* Fresh listings */}
+      <View style={s.section}>
+        <View style={s.sectionHeader}>
+          <Text style={s.sectionTitle}>Fresh Listings</Text>
+          <TouchableOpacity onPress={() => router.push('/(tabs)/explore' as any)}>
+            <Text style={s.viewAll}>View All →</Text>
+          </TouchableOpacity>
+        </View>
+
+        {loading ? (
+          <ActivityIndicator color={C.accent} style={{ marginVertical: 20 }} />
+        ) : listings.length === 0 ? (
+          <View style={s.empty}>
+            <Text style={{ color: C.textMuted, fontSize: 14, marginBottom: 16 }}>No listings yet. Be the first!</Text>
+            <TouchableOpacity style={s.ctaBtn} onPress={() => router.push('/post-ad' as any)}>
+              <Text style={s.ctaBtnText}>Post Free Ad</Text>
+            </TouchableOpacity>
+          </View>
+        ) : (
+          <View style={s.grid}>
+            {listings.map((l) => (
+              <TouchableOpacity
+                key={l.id} style={s.listingCard}
+                onPress={() => router.push(`/listing/${l.id}` as any)}
+              >
+                <View style={s.listingImg}>
+                  <Text style={{ fontSize: 28, opacity: 0.2 }}>📷</Text>
+                </View>
+                <View style={s.listingBody}>
+                  <Text style={s.listingCat}>{l.categoryName}</Text>
+                  <View style={s.titlePriceRow}>
+                    <Text style={s.listingTitle} numberOfLines={2}>{l.title}</Text>
+                    <Text style={s.listingPrice}>{fmtPrice(l.price)}</Text>
+                  </View>
+                  <Text style={s.listingCity} numberOfLines={1}>{fmtLocation(l)}</Text>
+                </View>
+              </TouchableOpacity>
+            ))}
+          </View>
+        )}
+      </View>
+
+      {/* CTA */}
       <TouchableOpacity style={s.ctaBanner} onPress={() => router.push('/post-ad' as any)}>
         <Text style={s.ctaBannerTitle}>Sell Faster on AnyNeeds</Text>
         <Text style={s.ctaBannerSub}>Post your ad for FREE →</Text>
       </TouchableOpacity>
+
       <View style={{ height: 32 }} />
     </ScrollView>
   );
@@ -142,44 +164,59 @@ export default function HomeScreen() {
 
 const s = StyleSheet.create({
   container: { flex: 1, backgroundColor: C.bg },
-  header: { padding: 20, paddingTop: 20 },
-  logo: { fontSize: 26, fontWeight: '800', color: C.text },
-  logoSub: { fontSize: 13, color: C.textSub, marginTop: 2 },
-  searchRow: { flexDirection: 'row', gap: 8, paddingHorizontal: 16, marginBottom: 24 },
+
+  hero: {
+    backgroundColor: '#07111e',
+    padding: 20,
+    paddingTop: 24,
+    paddingBottom: 28,
+  },
+  heroTitle: { fontSize: 24, fontWeight: '800', color: '#fff' },
+  heroSub: { fontSize: 13, color: 'rgba(255,255,255,0.6)', marginTop: 4, marginBottom: 16 },
+  searchRow: { flexDirection: 'row', gap: 8 },
   searchInput: {
-    flex: 1, backgroundColor: C.card, borderWidth: 1.5, borderColor: C.border,
-    borderRadius: 10, paddingHorizontal: 14, paddingVertical: 11, color: C.text, fontSize: 14,
+    flex: 1, backgroundColor: 'rgba(255,255,255,0.1)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.15)',
+    borderRadius: 10, paddingHorizontal: 14, paddingVertical: 11, color: '#fff', fontSize: 14,
   },
   searchBtn: {
     backgroundColor: C.accent, borderRadius: 10, width: 48,
     alignItems: 'center', justifyContent: 'center',
   },
-  sectionTitle: { fontSize: 17, fontWeight: '700', color: C.text, paddingHorizontal: 16, marginBottom: 12 },
-  sectionHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingRight: 16 },
-  catRow: { paddingLeft: 16, paddingRight: 8, paddingBottom: 8, gap: 10 },
+
+  section: { paddingTop: 20, paddingHorizontal: 14 },
+  sectionHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 },
+  sectionTitle: { fontSize: 16, fontWeight: '700', color: C.text, marginBottom: 12 },
+  viewAll: { color: C.accent, fontSize: 13, fontWeight: '600' },
+
+  catRow: { gap: 10, paddingBottom: 4 },
   catCard: {
     alignItems: 'center', backgroundColor: C.card, borderWidth: 1, borderColor: C.border,
-    borderRadius: 12, paddingVertical: 12, paddingHorizontal: 10, width: 70, marginBottom: 20,
+    borderRadius: 12, paddingVertical: 12, paddingHorizontal: 10, width: 68,
   },
   catEmoji: { fontSize: 22, marginBottom: 4 },
   catName: { fontSize: 10, color: C.textSub, textAlign: 'center', fontWeight: '600' },
-  grid: { flexDirection: 'row', flexWrap: 'wrap', paddingHorizontal: 12 },
+
+  grid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
   listingCard: {
-    width: '47%', margin: '1.5%', backgroundColor: C.card,
+    width: '48%', backgroundColor: C.card,
     borderWidth: 1, borderColor: C.border, borderRadius: 12, overflow: 'hidden',
   },
-  listingImg: { height: 100, backgroundColor: C.bg, alignItems: 'center', justifyContent: 'center' },
-  listingCat: { fontSize: 10, color: C.accent, fontWeight: '700', textTransform: 'uppercase' },
-  listingTitle: { fontSize: 13, fontWeight: '600', color: C.text, marginTop: 2 },
-  listingPrice: { fontSize: 14, fontWeight: '800', color: C.accent, marginTop: 4 },
-  listingCity: { fontSize: 11, color: C.textMuted, marginTop: 2 },
-  empty: { alignItems: 'center', padding: 40 },
+  listingImg: { height: 96, backgroundColor: '#f0f4f8', alignItems: 'center', justifyContent: 'center' },
+  listingBody: { padding: 10 },
+  listingCat: { fontSize: 9, color: C.accent, fontWeight: '700', textTransform: 'uppercase' },
+  titlePriceRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', gap: 4, marginTop: 2 },
+  listingTitle: { fontSize: 12, fontWeight: '600', color: C.text, flex: 1 },
+  listingPrice: { fontSize: 12, fontWeight: '800', color: C.text, flexShrink: 0 },
+  listingCity: { fontSize: 10, color: C.textMuted, marginTop: 4 },
+
+  empty: { alignItems: 'center', padding: 32 },
   ctaBtn: { backgroundColor: C.accent, paddingHorizontal: 20, paddingVertical: 10, borderRadius: 8 },
-  ctaBtnText: { color: '#000', fontWeight: '700', fontSize: 14 },
+  ctaBtnText: { color: '#07111e', fontWeight: '700', fontSize: 14 },
+
   ctaBanner: {
-    margin: 16, backgroundColor: C.card, borderWidth: 1, borderColor: C.border,
-    borderRadius: 16, padding: 24, alignItems: 'center',
+    margin: 14, marginTop: 20, backgroundColor: '#07111e',
+    borderRadius: 14, padding: 22, alignItems: 'center',
   },
-  ctaBannerTitle: { fontSize: 16, fontWeight: '700', color: C.text, marginBottom: 4 },
+  ctaBannerTitle: { fontSize: 15, fontWeight: '700', color: '#fff', marginBottom: 4 },
   ctaBannerSub: { fontSize: 13, color: C.accent, fontWeight: '600' },
 });

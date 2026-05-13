@@ -3,8 +3,9 @@ import React from 'react';
 import { useAuth } from '../../context/AuthContext';
 
 const ACCENT = '#00c8e0';
-const BG = '#0a1628';
-const INACTIVE = '#556080';
+const HEADER_BG = '#07111e';
+const TAB_BG = '#07111e';
+const INACTIVE = 'rgba(255,255,255,0.4)';
 
 export default function TabLayout() {
   const { isLoggedIn } = useAuth();
@@ -15,11 +16,11 @@ export default function TabLayout() {
         tabBarActiveTintColor: ACCENT,
         tabBarInactiveTintColor: INACTIVE,
         tabBarStyle: {
-          backgroundColor: '#0f1e3a',
-          borderTopColor: '#1e3060',
+          backgroundColor: TAB_BG,
+          borderTopColor: 'rgba(255,255,255,0.08)',
           borderTopWidth: 1,
         },
-        headerStyle: { backgroundColor: BG },
+        headerStyle: { backgroundColor: HEADER_BG },
         headerTintColor: '#ffffff',
         headerTitleStyle: { fontWeight: '700' },
       }}
@@ -28,7 +29,8 @@ export default function TabLayout() {
         name="index"
         options={{
           title: 'Home',
-          tabBarIcon: ({ color, size }) => <TabIcon emoji="🏠" color={color} />,
+          headerShown: false,
+          tabBarIcon: ({ color }) => <TabIcon emoji="🏠" color={color} />,
         }}
       />
       <Tabs.Screen

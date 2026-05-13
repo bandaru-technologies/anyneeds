@@ -8,9 +8,9 @@ import { useAuth } from '../../context/AuthContext';
 import { listingApi } from '../../services/api';
 
 const C = {
-  bg: '#0a1628', card: '#162040', border: '#1e3060',
-  accent: '#00c8e0', text: '#fff', textSub: '#8899bb', textMuted: '#556080',
-  error: '#ff5252', success: '#00e676', warning: '#ffab40',
+  bg: '#f5f7fa', card: '#ffffff', border: 'rgba(0,0,0,0.09)',
+  accent: '#00c8e0', text: '#1e293b', textSub: '#475569', textMuted: '#94a3b8',
+  error: '#ef4444', success: '#22c55e', warning: '#f97316',
 };
 
 function fmtPrice(price: any) {
@@ -71,30 +71,28 @@ export default function MyAdsScreen() {
       ListEmptyComponent={
         <View style={s.empty}>
           <Text style={{ fontSize: 40 }}>📋</Text>
-          <Text style={{ color: C.textSub, fontSize: 14, marginTop: 12 }}>
-            No ads posted yet
-          </Text>
+          <Text style={{ color: C.textSub, fontSize: 14, marginTop: 12 }}>No ads posted yet</Text>
         </View>
       }
       renderItem={({ item: l }) => (
         <View style={s.adCard}>
           <View style={s.adImg}>
-            <Text style={{ fontSize: 24, opacity: 0.25 }}>📷</Text>
+            <Text style={{ fontSize: 22, opacity: 0.2 }}>📷</Text>
           </View>
           <View style={s.adInfo}>
             <Text style={s.adCat}>{l.categoryName}</Text>
             <TouchableOpacity onPress={() => router.push(`/listing/${l.id}` as any)}>
-              <Text style={s.adTitle} numberOfLines={2}>{l.title}</Text>
+              <Text style={s.adTitle} numberOfLines={1}>{l.title}</Text>
             </TouchableOpacity>
             <Text style={s.adPrice}>{fmtPrice(l.price)}</Text>
-            <Text style={[
-              s.adStatus,
-              { color: l.status === 'ACTIVE' ? C.success : C.warning }
-            ]}>
-              {l.status}
+            <Text style={s.adLocation} numberOfLines={1}>
+              {l.location && l.city ? `${l.location}, ${l.city}` : l.city || 'India'}
             </Text>
           </View>
-          <View style={s.adActions}>
+          <View style={s.adRight}>
+            <Text style={[s.adStatus, { color: l.status === 'ACTIVE' ? C.success : C.warning }]}>
+              {l.status}
+            </Text>
             {l.status === 'ACTIVE' && (
               <TouchableOpacity style={s.soldBtn} onPress={() => handleMarkSold(l.id)}>
                 <Text style={s.soldBtnText}>Sold</Text>
@@ -114,27 +112,29 @@ const s = StyleSheet.create({
   container: { flex: 1, backgroundColor: C.bg },
   postBtn: {
     backgroundColor: C.accent, borderRadius: 10, paddingVertical: 12,
-    alignItems: 'center', marginBottom: 16,
+    alignItems: 'center', marginBottom: 14,
   },
-  postBtnText: { color: '#000', fontWeight: '700', fontSize: 14 },
+  postBtnText: { color: '#07111e', fontWeight: '700', fontSize: 14 },
   adCard: {
     flexDirection: 'row', alignItems: 'center', gap: 12,
     backgroundColor: C.card, borderWidth: 1, borderColor: C.border,
-    borderRadius: 12, padding: 12, marginBottom: 12,
+    borderRadius: 12, padding: 12, marginBottom: 10,
   },
   adImg: {
-    width: 72, height: 60, backgroundColor: C.bg, borderRadius: 8,
+    width: 68, height: 60, backgroundColor: '#f0f4f8', borderRadius: 8,
     alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+    borderWidth: 1, borderColor: C.border,
   },
   adInfo: { flex: 1 },
   adCat: { fontSize: 9, color: C.accent, fontWeight: '700', textTransform: 'uppercase' },
-  adTitle: { fontSize: 13, fontWeight: '600', color: C.text },
-  adPrice: { fontSize: 14, fontWeight: '800', color: C.accent, marginTop: 2 },
-  adStatus: { fontSize: 11, fontWeight: '600', marginTop: 2 },
-  adActions: { gap: 6 },
+  adTitle: { fontSize: 13, fontWeight: '600', color: C.text, marginTop: 2 },
+  adPrice: { fontSize: 14, fontWeight: '800', color: C.text, marginTop: 2 },
+  adLocation: { fontSize: 11, color: C.textMuted, marginTop: 2 },
+  adRight: { alignItems: 'flex-end', gap: 6 },
+  adStatus: { fontSize: 10, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 0.3 },
   soldBtn: {
-    backgroundColor: 'rgba(0,230,118,0.15)', borderRadius: 6,
-    paddingHorizontal: 10, paddingVertical: 5,
+    backgroundColor: 'rgba(34,197,94,0.1)', borderRadius: 6,
+    paddingHorizontal: 10, paddingVertical: 5, borderWidth: 1, borderColor: 'rgba(34,197,94,0.2)',
   },
   soldBtnText: { color: C.success, fontSize: 11, fontWeight: '700' },
   delBtn: { alignItems: 'center', padding: 4 },

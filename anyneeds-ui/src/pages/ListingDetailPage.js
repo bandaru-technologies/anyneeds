@@ -39,6 +39,12 @@ export default function ListingDetailPage() {
           <span>{listing.title}</span>
         </div>
 
+        <div className="detail-nav">
+          <button className="btn btn-ghost detail-nav-back" onClick={() => navigate(-1)}>← Back</button>
+          <Link to="/" className="btn btn-ghost detail-nav-home">🏠 Home</Link>
+          <Link to="/listings" className="btn btn-ghost detail-nav-browse">Browse All Ads</Link>
+        </div>
+
         <div className="detail-layout">
           {/* Left */}
           <div className="detail-left">

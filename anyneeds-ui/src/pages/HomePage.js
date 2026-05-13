@@ -7,6 +7,11 @@ import './HomePage.css';
 
 const POPULAR = ['iPhone', 'Honda City', '2BHK Flat', 'Sofa', 'Laptop'];
 
+function toTickerMsg(listing) {
+  const city = listing.city || listing.location || 'India';
+  return `Someone from ${city} just posted ${listing.title}`;
+}
+
 const CITIES = [
   'Mumbai', 'Delhi', 'Bangalore', 'Hyderabad', 'Chennai',
   'Kolkata', 'Pune', 'Ahmedabad', 'Jaipur', 'Lucknow',
@@ -20,10 +25,54 @@ export default function HomePage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchCity, setSearchCity] = useState('');
   const [loading, setLoading] = useState(true);
+  const [activityMsgs, setActivityMsgs] = useState([]);
+  const [activityIdx, setActivityIdx] = useState(0);
+  const [activityVisible, setActivityVisible] = useState(true);
+  const latestIdRef = React.useRef(null);
   const navigate = useNavigate();
 
+  const fetchRecentActivity = React.useCallback((prepend = false) => {
+    getListings({ size: 10, sort: 'createdAt,desc' })
+      .then((res) => {
+        const items = res.data.content || [];
+        if (!items.length) return;
+        const msgs = items.map(toTickerMsg);
+        if (prepend) {
+          const newId = items[0].id;
+          if (newId !== latestIdRef.current) {
+            latestIdRef.current = newId;
+            setActivityMsgs((prev) => [msgs[0], ...prev.filter((m) => m !== msgs[0])]);
+            setActivityVisible(false);
+            setTimeout(() => { setActivityIdx(0); setActivityVisible(true); }, 400);
+          }
+        } else {
+          latestIdRef.current = items[0].id;
+          setActivityMsgs(msgs);
+        }
+      })
+      .catch(() => {});
+  }, []);
+
   useEffect(() => {
-    Promise.all([getCategories(), getListings({ size: 8 })])
+    fetchRecentActivity(false);
+    const poll = setInterval(() => fetchRecentActivity(true), 30000);
+    return () => clearInterval(poll);
+  }, [fetchRecentActivity]);
+
+  useEffect(() => {
+    if (!activityMsgs.length) return;
+    const interval = setInterval(() => {
+      setActivityVisible(false);
+      setTimeout(() => {
+        setActivityIdx((i) => (i + 1) % activityMsgs.length);
+        setActivityVisible(true);
+      }, 400);
+    }, 3500);
+    return () => clearInterval(interval);
+  }, [activityMsgs]);
+
+  useEffect(() => {
+    Promise.all([getCategories(), getListings({ size: 50 })])
       .then(([catRes, listRes]) => {
         setCategories(catRes.data);
         setListings(listRes.data.content || []);
@@ -55,7 +104,7 @@ export default function HomePage() {
             <br />Near You
           </h1>
           <p className="hero-sub">
-            AnyNeeds connects millions of buyers and sellers across India.<br />
+            Salepe connects millions of buyers and sellers across India.<br />
             Post your ad for free and start selling today.
           </p>
 
@@ -100,6 +149,13 @@ export default function HomePage() {
               <Link key={p} to={`/listings?keyword=${encodeURIComponent(p)}`} className="popular-tag">{p}</Link>
             ))}
           </div>
+
+          {activityMsgs.length > 0 && (
+            <div className={`activity-ticker${activityVisible ? ' activity-ticker-show' : ''}`}>
+              <span className="activity-dot" />
+              {activityMsgs[activityIdx % activityMsgs.length]}
+            </div>
+          )}
 
           <div className="hero-stats">
             <div className="stat"><strong>2.5M+</strong><span>Active Listings</span></div>

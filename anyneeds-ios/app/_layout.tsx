@@ -16,7 +16,7 @@ export default function RootLayout() {
           name="listing/[id]"
           options={{
             headerShown: true,
-            headerStyle: { backgroundColor: '#0a1628' },
+            headerStyle: { backgroundColor: '#07111e' },
             headerTintColor: '#00c8e0',
             headerTitle: 'Listing Details',
             headerBackTitle: 'Back',
@@ -26,9 +26,18 @@ export default function RootLayout() {
           name="post-ad"
           options={{
             headerShown: true,
-            headerStyle: { backgroundColor: '#0a1628' },
+            headerStyle: { backgroundColor: '#07111e' },
             headerTintColor: '#00c8e0',
-            headerTitle: 'Post Ad',
+            headerTitle: 'Post Free Ad',
+          }}
+        />
+        <Stack.Screen
+          name="my-ads/index"
+          options={{
+            headerShown: true,
+            headerStyle: { backgroundColor: '#07111e' },
+            headerTintColor: '#00c8e0',
+            headerTitle: 'My Ads',
           }}
         />
       </Stack>
