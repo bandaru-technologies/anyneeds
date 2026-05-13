@@ -57,24 +57,48 @@
 /* Category grid */
 .cat-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 10px;
   margin-bottom: 20px;
 }
 
 .cat-btn {
-  display: flex; align-items: center; gap: 8px;
-  padding: 14px 16px;
-  background: #f8fafc;
-  border: 1px solid rgba(0,0,0,0.1);
-  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 14px 8px 12px;
+  background: var(--bg);
+  border: 1.5px solid rgba(0,0,0,0.08);
+  border-radius: 12px;
   color: var(--text-secondary);
-  font-size: 13px; font-weight: 500;
-  cursor: pointer; transition: all 0.15s; text-align: left;
+  cursor: pointer; transition: all 0.15s; text-align: center;
+  position: relative;
 }
-.cat-btn:hover { border-color: var(--primary); color: var(--text-primary); background: rgba(0,200,224,0.05); }
-.cat-btn-active { border-color: var(--primary); background: rgba(0,200,224,0.08); color: var(--primary); font-weight: 600; }
-.cat-check { flex-shrink: 0; color: var(--primary); }
+.cat-btn:hover { border-color: var(--primary); background: rgba(0,200,224,0.04); }
+.cat-btn-active { border-color: var(--primary); background: rgba(0,200,224,0.08); }
+
+.cat-icon-emoji {
+  font-size: 30px;
+  line-height: 1;
+  width: 52px; height: 52px;
+  border-radius: 13px;
+  background: rgba(0,0,0,0.05);
+  display: flex; align-items: center; justify-content: center;
+}
+.cat-btn-active .cat-icon-emoji { background: rgba(0,200,224,0.12); }
+
+.cat-btn-name {
+  font-size: 11px; font-weight: 600;
+  color: var(--text-primary);
+  line-height: 1.3;
+}
+.cat-btn-active .cat-btn-name { color: var(--primary); }
+
+.cat-check {
+  position: absolute; top: 6px; right: 6px;
+  color: var(--primary);
+}
 
 /* Form groups */
 .wform-group { margin-bottom: 20px; }
@@ -182,6 +206,41 @@
 }
 .btn-wizard-next:hover { background: var(--primary-dark); }
 .btn-wizard-next:disabled { opacity: 0.6; cursor: not-allowed; }
+
+/* Condition selector */
+.condition-selector {
+  display: flex; gap: 8px; flex-wrap: wrap;
+}
+.condition-btn {
+  padding: 7px 16px;
+  border-radius: 20px;
+  border: 1.5px solid rgba(0,0,0,0.12);
+  background: #fff;
+  font-size: 13px; font-weight: 600;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.condition-btn:hover { border-color: rgba(0,0,0,0.3); }
+.condition-btn-active { font-weight: 700; }
+
+/* Negotiable toggle */
+.negotiable-toggle-row { display: flex; align-items: center; gap: 10px; cursor: pointer; }
+.toggle-switch {
+  width: 40px; height: 22px; border-radius: 11px;
+  background: rgba(0,0,0,0.12); position: relative;
+  transition: background 0.2s; cursor: pointer; flex-shrink: 0;
+}
+.toggle-switch.on { background: var(--primary); }
+.toggle-thumb {
+  width: 16px; height: 16px; border-radius: 50%;
+  background: #fff; position: absolute;
+  top: 3px; left: 3px;
+  transition: transform 0.2s;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+.toggle-switch.on .toggle-thumb { transform: translateX(18px); }
+.negotiable-label { font-size: 13px; color: var(--text-secondary); font-weight: 500; }
 
 @media (max-width: 640px) {
   .wizard-body { padding: 24px 20px; }

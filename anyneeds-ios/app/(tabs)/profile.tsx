@@ -9,8 +9,9 @@ import { authApi } from '../../services/api';
 
 const C = {
   bg: '#f5f7fa', card: '#ffffff', border: 'rgba(0,0,0,0.09)',
-  accent: '#00c8e0', text: '#1e293b', textSub: '#475569', textMuted: '#94a3b8',
-  error: '#ef4444', success: '#22c55e',
+  accent: '#00c8e0', accentDark: '#07111e',
+  text: '#1e293b', textSub: '#475569', textMuted: '#94a3b8',
+  error: '#ef4444', success: '#22c55e', warning: '#f97316',
 };
 
 export default function ProfileScreen() {
@@ -25,9 +26,9 @@ export default function ProfileScreen() {
     return (
       <View style={[s.container, { justifyContent: 'center', alignItems: 'center', padding: 32 }]}>
         <Text style={{ fontSize: 48, marginBottom: 16 }}>👤</Text>
-        <Text style={{ color: C.text, fontSize: 18, fontWeight: '700', marginBottom: 8 }}>Login to AnyNeeds</Text>
+        <Text style={{ color: C.text, fontSize: 18, fontWeight: '700', marginBottom: 8 }}>Login to SalePe</Text>
         <Text style={{ color: C.textSub, fontSize: 14, marginBottom: 28, textAlign: 'center', lineHeight: 20 }}>
-          Login to post ads, track your listings, and manage your account
+          Login to post ads, save listings, chat with sellers, and manage your account
         </Text>
         <TouchableOpacity style={s.primaryBtn} onPress={() => router.push('/login' as any)}>
           <Text style={s.primaryBtnText}>Login with Mobile OTP</Text>
@@ -66,7 +67,7 @@ export default function ProfileScreen() {
             {(user?.name || user?.phoneNumber || 'U')[0].toUpperCase()}
           </Text>
         </View>
-        <Text style={s.profileName}>{user?.name || 'AnyNeeds User'}</Text>
+        <Text style={s.profileName}>{user?.name || 'SalePe User'}</Text>
         <Text style={s.profilePhone}>+91 {user?.phoneNumber}</Text>
       </View>
 
@@ -94,6 +95,40 @@ export default function ProfileScreen() {
       <View style={s.card}>
         <TouchableOpacity style={s.menuItem} onPress={() => router.push('/my-ads' as any)}>
           <Text style={s.menuItemText}>📋  My Ads</Text>
+          <Text style={{ color: C.accent, fontSize: 16 }}>→</Text>
+        </TouchableOpacity>
+        <View style={s.menuDivider} />
+        <TouchableOpacity style={s.menuItem} onPress={() => router.push('/(tabs)/messages' as any)}>
+          <Text style={s.menuItemText}>💬  Messages</Text>
+          <Text style={{ color: C.accent, fontSize: 16 }}>→</Text>
+        </TouchableOpacity>
+        <View style={s.menuDivider} />
+        <TouchableOpacity style={s.menuItem} onPress={() => router.push('/(tabs)/saved' as any)}>
+          <Text style={s.menuItemText}>❤️  Saved</Text>
+          <Text style={{ color: C.accent, fontSize: 16 }}>→</Text>
+        </TouchableOpacity>
+        <View style={s.menuDivider} />
+        <TouchableOpacity
+          style={s.menuItem}
+          onPress={() => Alert.alert('Coming Soon', 'Analytics feature is coming soon!')}
+        >
+          <Text style={s.menuItemText}>📊  Analytics</Text>
+          <Text style={{ color: C.accent, fontSize: 16 }}>→</Text>
+        </TouchableOpacity>
+        <View style={s.menuDivider} />
+        <TouchableOpacity
+          style={s.menuItem}
+          onPress={() => Alert.alert('Coming Soon', 'Subscription plans coming soon!')}
+        >
+          <Text style={s.menuItemText}>⭐  Subscription</Text>
+          <Text style={{ color: C.accent, fontSize: 16 }}>→</Text>
+        </TouchableOpacity>
+        <View style={s.menuDivider} />
+        <TouchableOpacity
+          style={s.menuItem}
+          onPress={() => Alert.alert('Referral', 'Invite link copied!')}
+        >
+          <Text style={s.menuItemText}>🎁  Invite &amp; Earn</Text>
           <Text style={{ color: C.accent, fontSize: 16 }}>→</Text>
         </TouchableOpacity>
         <View style={s.menuDivider} />

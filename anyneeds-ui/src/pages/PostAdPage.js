@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { createListing, getCategories } from '../services/listingService';
 import { CITIES, lookupState } from '../data/cityStateMap';
+import { CATEGORY_ICONS } from '../data/categoryIcons';
 import LocationAutocomplete from '../components/LocationAutocomplete';
 import api from '../services/api';
 import './PostAdPage.css';
@@ -28,7 +29,7 @@ export default function PostAdPage() {
   const [uploading, setUploading] = useState(Array(GRID_SIZE).fill(false));
   const [form, setForm] = useState({
     title: '', description: '', price: '', adType: 'For Sale', categoryId: '',
-    imageUrls: emptyGrid(), location: '', city: '', state: '',
+    condition: '', negotiable: false, imageUrls: emptyGrid(), location: '', city: '', state: '',
   });
 
   useEffect(() => {
@@ -158,10 +159,11 @@ export default function PostAdPage() {
                     className={`cat-btn ${String(form.categoryId) === String(c.id) ? 'cat-btn-active' : ''}`}
                     onClick={() => { setForm((f) => ({ ...f, categoryId: String(c.id) })); setFieldErrors((fe) => ({ ...fe, category: '' })); }}
                   >
+                    <span className="cat-icon-emoji">{CATEGORY_ICONS[c.slug] || '📦'}</span>
+                    <span className="cat-btn-name">{c.name}</span>
                     {String(form.categoryId) === String(c.id) && (
                       <svg className="cat-check" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><polyline points="20 6 9 17 4 12"/></svg>
                     )}
-                    {c.name}
                   </button>
                 ))}
               </div>
@@ -200,11 +202,47 @@ export default function PostAdPage() {
                 />
               </div>
 
+              <div className="wform-group">
+                <label className="wform-label">Condition</label>
+                <div className="condition-selector">
+                  {[
+                    { val: 'NEW', label: 'Brand New', color: '#22c55e' },
+                    { val: 'LIKE_NEW', label: 'Like New', color: '#06b6d4' },
+                    { val: 'GOOD', label: 'Good', color: '#3b82f6' },
+                    { val: 'FAIR', label: 'Fair', color: '#f59e0b' },
+                  ].map(({ val, label, color }) => (
+                    <button
+                      key={val} type="button"
+                      className={`condition-btn ${form.condition === val ? 'condition-btn-active' : ''}`}
+                      style={form.condition === val ? { borderColor: color, background: `${color}15`, color } : {}}
+                      onClick={() => setForm((f) => ({ ...f, condition: f.condition === val ? '' : val }))}
+                    >
+                      {label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="wform-group">
+                <label className="wform-label">Negotiable</label>
+                <label className="negotiable-toggle-row">
+                  <div
+                    className={`toggle-switch ${form.negotiable ? 'on' : ''}`}
+                    onClick={() => setForm((f) => ({ ...f, negotiable: !f.negotiable }))}
+                    role="switch"
+                    aria-checked={form.negotiable}
+                  >
+                    <div className="toggle-thumb" />
+                  </div>
+                  <span className="negotiable-label">{form.negotiable ? 'Price is negotiable' : 'Fixed price'}</span>
+                </label>
+              </div>
+
               <div className="wform-row">
                 <div className="wform-group">
                   <label className="wform-label">Price (₹) <span className="req-star">*</span></label>
                   <div className="price-input-wrap">
-                    <span className="price-symbol">$</span>
+                    <span className="price-symbol">₹</span>
                     <input
                       className={`input-field price-input ${fieldErrors.price ? 'input-error' : ''}`}
                       type="number"

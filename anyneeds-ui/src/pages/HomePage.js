@@ -3,6 +3,9 @@ import { Link, useNavigate } from 'react-router-dom';
 import CategoryGrid from '../components/CategoryGrid';
 import ListingCard from '../components/ListingCard';
 import { getCategories, getListings } from '../services/listingService';
+import { useRecentlyViewed } from '../hooks/useRecentlyViewed';
+import { useAuth } from '../context/AuthContext';
+import api from '../services/api';
 import './HomePage.css';
 
 const POPULAR = ['iPhone', 'Honda City', '2BHK Flat', 'Sofa', 'Laptop'];
@@ -30,6 +33,10 @@ export default function HomePage() {
   const [activityVisible, setActivityVisible] = useState(true);
   const latestIdRef = React.useRef(null);
   const navigate = useNavigate();
+  const { recentlyViewed } = useRecentlyViewed();
+  const { isLoggedIn } = useAuth();
+  const [featured, setFeatured] = useState([]);
+  const [followingFeed, setFollowingFeed] = useState([]);
 
   const fetchRecentActivity = React.useCallback((prepend = false) => {
     getListings({ size: 10, sort: 'createdAt,desc' })
@@ -72,14 +79,26 @@ export default function HomePage() {
   }, [activityMsgs]);
 
   useEffect(() => {
-    Promise.all([getCategories(), getListings({ size: 50 })])
-      .then(([catRes, listRes]) => {
+    Promise.all([
+      getCategories(),
+      getListings({ size: 50 }),
+      api.get('/api/listings/featured').catch(() => ({ data: [] })),
+    ])
+      .then(([catRes, listRes, featuredRes]) => {
         setCategories(catRes.data);
         setListings(listRes.data.content || []);
+        setFeatured(featuredRes.data || []);
       })
       .catch(() => {})
       .finally(() => setLoading(false));
   }, []);
+
+  useEffect(() => {
+    if (!isLoggedIn) return;
+    api.get('/api/follows/feed/preview')
+      .then((r) => setFollowingFeed(r.data || []))
+      .catch(() => {});
+  }, [isLoggedIn]);
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -100,12 +119,10 @@ export default function HomePage() {
           </div>
 
           <h1 className="hero-title">
-            Buy, Sell &amp; <span className="hero-accent">Find Anything</span>
-            <br />Near You
+            Everything On Sale, <span className="hero-accent">Near You</span>
           </h1>
           <p className="hero-sub">
-            Salepe connects millions of buyers and sellers across India.<br />
-            Post your ad for free and start selling today.
+            Discover nearby deals, connect with trusted buyers and sellers, and buy or sell new &amp; used products across India with SalePe.
           </p>
 
           <form className="hero-search-bar" onSubmit={handleSearch}>
@@ -157,12 +174,6 @@ export default function HomePage() {
             </div>
           )}
 
-          <div className="hero-stats">
-            <div className="stat"><strong>2.5M+</strong><span>Active Listings</span></div>
-            <div className="stat"><strong>8M+</strong><span>Happy Users</span></div>
-            <div className="stat"><strong>500+</strong><span>Cities Covered</span></div>
-            <div className="stat"><strong>50K+</strong><span>Daily Deals</span></div>
-          </div>
         </div>
       </section>
 
@@ -171,6 +182,68 @@ export default function HomePage() {
       ) : (
         <>
           <CategoryGrid categories={categories} />
+
+          {featured.length > 0 && (
+            <section className="section">
+              <div className="container">
+                <div className="section-header">
+                  <div className="section-title-line">
+                    <span className="sponsored-label">Sponsored</span>
+                    <h2 className="section-title">Featured Products</h2>
+                  </div>
+                  <Link to="/listings" className="view-all-link">View All →</Link>
+                </div>
+                <div className="listings-grid featured-grid">
+                  {featured.map((l) => <ListingCard key={l.id} listing={l} />)}
+                </div>
+              </div>
+            </section>
+          )}
+
+          {followingFeed.length > 0 && (
+            <section className="section">
+              <div className="container">
+                <div className="section-header">
+                  <div className="section-title-line">
+                    <h2 className="section-title">From Sellers You Follow</h2>
+                  </div>
+                  <Link to="/listings" className="view-all-link">View All →</Link>
+                </div>
+                <div className="listings-grid">
+                  {followingFeed.map((l) => <ListingCard key={l.id} listing={l} />)}
+                </div>
+              </div>
+            </section>
+          )}
+
+          {recentlyViewed.length > 0 && (
+            <section className="section">
+              <div className="container">
+                <div className="section-header">
+                  <div className="section-title-line">
+                    <h2 className="section-title">Recently Viewed</h2>
+                  </div>
+                </div>
+                <div className="recently-viewed-scroll">
+                  {recentlyViewed.slice(0, 10).map((l) => (
+                    <div key={l.id} className="rv-card" onClick={() => navigate(`/listings/${l.id}`)}>
+                      <div className="rv-img">
+                        {l.imageUrls?.[0]
+                          ? <img src={l.imageUrls[0]} alt={l.title} />
+                          : <span className="rv-no-img">📷</span>
+                        }
+                      </div>
+                      <div className="rv-body">
+                        <p className="rv-title">{l.title}</p>
+                        <p className="rv-price">{l.price ? `₹${Number(l.price).toLocaleString('en-IN')}` : 'Price on Request'}</p>
+                        <p className="rv-city">{l.city || '—'}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </section>
+          )}
 
           <section className="section">
             <div className="container">
@@ -196,18 +269,6 @@ export default function HomePage() {
         </>
       )}
 
-      {/* CTA */}
-      <section className="cta-section">
-        <div className="container">
-          <div className="cta-inner">
-            <div className="cta-text">
-              <h2>Have something to sell?</h2>
-              <p>Join millions of buyers and sellers — post your ad for free today</p>
-            </div>
-            <button className="cta-btn" onClick={() => navigate('/post-ad')}>+ Post Ad FREE</button>
-          </div>
-        </div>
-      </section>
     </div>
   );
 }

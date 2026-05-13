@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import {
   View, Text, StyleSheet, TextInput, TouchableOpacity,
-  ScrollView, Alert, KeyboardAvoidingView, Platform,
+  ScrollView, Alert, KeyboardAvoidingView, Platform, Switch,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useAuth } from '../context/AuthContext';
@@ -9,9 +9,37 @@ import { listingApi } from '../services/api';
 
 const C = {
   bg: '#f5f7fa', card: '#ffffff', border: 'rgba(0,0,0,0.1)',
-  accent: '#00c8e0', text: '#1e293b', textSub: '#475569', textMuted: '#94a3b8',
-  error: '#ef4444',
+  accent: '#00c8e0', accentDark: '#07111e',
+  text: '#1e293b', textSub: '#475569', textMuted: '#94a3b8',
+  error: '#ef4444', success: '#22c55e',
 };
+
+const CATEGORY_ICONS: Record<string, string> = {
+  'cars': '🚗',
+  'bikes': '🏍️',
+  'other-vehicles': '🚛',
+  'mobiles-electronics': '📱',
+  'jobs': '💼',
+  'real-estate': '🏢',
+  'hotel-pg': '🛏️',
+  'furniture-home': '🛋️',
+  'carpool-travel': '🗺️',
+  'animals-pets': '🐾',
+  'fashion-beauty': '👗',
+  'books-education': '📚',
+  'events-promotions': '🏷️',
+  'home-services': '🔧',
+  'software-it': '💻',
+  'business': '📈',
+  'others': '📦',
+};
+
+const CONDITIONS = [
+  { label: 'Brand New', value: 'NEW' },
+  { label: 'Like New', value: 'LIKE_NEW' },
+  { label: 'Good', value: 'GOOD' },
+  { label: 'Fair', value: 'FAIR' },
+];
 
 export default function PostAdScreen() {
   const router = useRouter();
@@ -24,6 +52,8 @@ export default function PostAdScreen() {
   const [city, setCity] = useState('');
   const [state, setState] = useState('');
   const [area, setArea] = useState('');
+  const [condition, setCondition] = useState('');
+  const [negotiable, setNegotiable] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -53,10 +83,18 @@ export default function PostAdScreen() {
         city: city.trim(),
         state: state.trim(),
         location: area.trim(),
+        condition: condition || null,
+        negotiable,
       });
       Alert.alert('Ad Posted!', 'Your ad is now live', [
         { text: 'View Ad', onPress: () => router.replace(`/listing/${data.id}` as any) },
-        { text: 'Post Another', onPress: () => { setTitle(''); setDescription(''); setPrice(''); setArea(''); } },
+        {
+          text: 'Post Another',
+          onPress: () => {
+            setTitle(''); setDescription(''); setPrice(''); setArea('');
+            setCondition(''); setNegotiable(false);
+          },
+        },
       ]);
     } catch (e: any) {
       const d = e.response?.data;
@@ -67,33 +105,51 @@ export default function PostAdScreen() {
     }
   };
 
+  // Build a 2-column grid from categories, enriched with icons from slug
+  const categoryRows: any[][] = [];
+  for (let i = 0; i < categories.length; i += 2) {
+    categoryRows.push(categories.slice(i, i + 2));
+  }
+
   return (
     <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
       <ScrollView style={s.container} showsVerticalScrollIndicator={false}>
 
-        {/* Category */}
+        {/* Category grid */}
         <View style={s.section}>
           <Text style={s.sectionNum}>1</Text>
           <Text style={s.sectionTitle}>Select Category *</Text>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8, paddingVertical: 4 }}>
-            {categories.map((c: any) => (
-              <TouchableOpacity
-                key={c.id}
-                style={[s.pill, String(selectedCat) === String(c.id) && s.pillActive]}
-                onPress={() => setSelectedCat(String(c.id))}
-              >
-                <Text style={[s.pillText, String(selectedCat) === String(c.id) && s.pillTextActive]}>
-                  {c.name}
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </ScrollView>
+          {categoryRows.map((row, ri) => (
+            <View key={ri} style={s.catGridRow}>
+              {row.map((c: any) => {
+                const icon = CATEGORY_ICONS[c.slug] || '📦';
+                const isActive = String(selectedCat) === String(c.id);
+                return (
+                  <TouchableOpacity
+                    key={c.id}
+                    style={[s.catTile, isActive && s.catTileActive]}
+                    onPress={() => setSelectedCat(String(c.id))}
+                  >
+                    <View style={[s.catTileIconBox, isActive && s.catTileIconBoxActive]}>
+                      <Text style={s.catTileIcon}>{icon}</Text>
+                    </View>
+                    <Text style={[s.catTileName, isActive && s.catTileNameActive]} numberOfLines={2}>
+                      {c.name}
+                    </Text>
+                  </TouchableOpacity>
+                );
+              })}
+              {/* If odd number of categories, fill with empty slot */}
+              {row.length === 1 && <View style={s.catTileEmpty} />}
+            </View>
+          ))}
         </View>
 
         {/* Ad Details */}
         <View style={s.section}>
           <Text style={s.sectionNum}>2</Text>
           <Text style={s.sectionTitle}>Ad Details</Text>
+
           <Text style={s.label}>Title *</Text>
           <TextInput
             style={s.input}
@@ -103,6 +159,7 @@ export default function PostAdScreen() {
             onChangeText={setTitle}
             maxLength={200}
           />
+
           <Text style={s.label}>Description</Text>
           <TextInput
             style={[s.input, { height: 96, textAlignVertical: 'top', paddingTop: 12 }]}
@@ -113,6 +170,7 @@ export default function PostAdScreen() {
             multiline
             numberOfLines={4}
           />
+
           <Text style={s.label}>Price (₹)</Text>
           <TextInput
             style={s.input}
@@ -122,6 +180,36 @@ export default function PostAdScreen() {
             onChangeText={(t) => setPrice(t.replace(/\D/g, ''))}
             keyboardType="numeric"
           />
+
+          {/* Condition */}
+          <Text style={s.label}>Condition</Text>
+          <View style={s.pillsRow}>
+            {CONDITIONS.map((cond) => (
+              <TouchableOpacity
+                key={cond.value}
+                style={[s.pill, condition === cond.value && s.pillActive]}
+                onPress={() => setCondition(cond.value)}
+              >
+                <Text style={[s.pillText, condition === cond.value && s.pillTextActive]}>
+                  {cond.label}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+
+          {/* Negotiable toggle */}
+          <View style={s.toggleRow}>
+            <View>
+              <Text style={s.toggleLabel}>Price Negotiable</Text>
+              <Text style={s.toggleSub}>Allow buyers to negotiate the price</Text>
+            </View>
+            <Switch
+              value={negotiable}
+              onValueChange={setNegotiable}
+              trackColor={{ false: 'rgba(0,0,0,0.12)', true: 'rgba(0,200,224,0.35)' }}
+              thumbColor={negotiable ? C.accent : '#ccc'}
+            />
+          </View>
         </View>
 
         {/* Location */}
@@ -190,14 +278,46 @@ const s = StyleSheet.create({
     backgroundColor: '#f8fafc', borderWidth: 1, borderColor: 'rgba(0,0,0,0.1)',
     borderRadius: 8, padding: 12, color: C.text, fontSize: 14, marginBottom: 14,
   },
-  locRow: { flexDirection: 'row', gap: 10 },
+
+  // Category grid
+  catGridRow: { flexDirection: 'row', gap: 10, marginBottom: 10 },
+  catTile: {
+    flex: 1, alignItems: 'center', padding: 12, borderRadius: 12,
+    borderWidth: 1.5, borderColor: C.border, backgroundColor: '#f8fafc',
+  },
+  catTileActive: {
+    borderColor: C.accent, backgroundColor: 'rgba(0,200,224,0.07)',
+  },
+  catTileIconBox: {
+    width: 48, height: 48, borderRadius: 12,
+    backgroundColor: '#eef1f5', alignItems: 'center', justifyContent: 'center',
+    marginBottom: 6,
+  },
+  catTileIconBoxActive: { backgroundColor: 'rgba(0,200,224,0.15)' },
+  catTileIcon: { fontSize: 24 },
+  catTileName: { fontSize: 12, fontWeight: '600', color: C.textSub, textAlign: 'center' },
+  catTileNameActive: { color: C.accent },
+  catTileEmpty: { flex: 1 },
+
+  // Condition pills
+  pillsRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 14 },
   pill: {
-    paddingHorizontal: 14, paddingVertical: 7, borderRadius: 20,
+    paddingHorizontal: 14, paddingVertical: 8, borderRadius: 20,
     borderWidth: 1, borderColor: 'rgba(0,0,0,0.1)', backgroundColor: '#f8fafc',
   },
   pillActive: { borderColor: C.accent, backgroundColor: 'rgba(0,200,224,0.08)' },
   pillText: { fontSize: 12, color: C.textSub, fontWeight: '600' },
   pillTextActive: { color: C.accent },
+
+  // Negotiable toggle
+  toggleRow: {
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
+    paddingVertical: 8, marginBottom: 4,
+  },
+  toggleLabel: { fontSize: 14, fontWeight: '600', color: C.text },
+  toggleSub: { fontSize: 11, color: C.textMuted, marginTop: 2 },
+
+  locRow: { flexDirection: 'row', gap: 10 },
   error: {
     color: C.error, fontSize: 13, backgroundColor: 'rgba(239,68,68,0.08)',
     padding: 12, borderRadius: 8, margin: 12, borderWidth: 1, borderColor: 'rgba(239,68,68,0.15)',

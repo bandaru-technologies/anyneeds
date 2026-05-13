@@ -10,7 +10,7 @@ const api = axios.create({
 });
 
 api.interceptors.request.use(async (config) => {
-  const token = await AsyncStorage.getItem('anyneeds_token');
+  const token = await AsyncStorage.getItem('salepe_token');
   if (token) config.headers.Authorization = `Bearer ${token}`;
   return config;
 });
@@ -18,8 +18,12 @@ api.interceptors.request.use(async (config) => {
 export const authApi = {
   sendOtp: (phoneNumber: string) =>
     api.post('/api/auth/send-otp', { phoneNumber }),
-  verifyOtp: (phoneNumber: string, otpCode: string) =>
-    api.post('/api/auth/verify-otp', { phoneNumber, otpCode }),
+  verifyOtp: (phoneNumber: string, otpCode: string, referralCode?: string) =>
+    api.post('/api/auth/verify-otp', {
+      phoneNumber,
+      otpCode,
+      ...(referralCode ? { referralCode } : {}),
+    }),
   getProfile: () => api.get('/api/users/me'),
   updateProfile: (data: any) => api.put('/api/users/me', data),
 };
@@ -32,6 +36,17 @@ export const listingApi = {
   markAsSold: (id: number) => api.patch(`/api/listings/${id}/sold`),
   deleteListing: (id: number) => api.delete(`/api/listings/${id}`),
   getCategories: () => api.get('/api/categories'),
+};
+
+export const wishlistApi = {
+  getSaved: () => api.get('/api/wishlists'),
+  toggle: (listingId: number) => api.post(`/api/wishlists/${listingId}`),
+};
+
+export const conversationApi = {
+  getAll: () => api.get('/api/conversations'),
+  create: (listingId: number) => api.post('/api/conversations', { listingId }),
+  getUnread: () => api.get('/api/conversations/unread'),
 };
 
 export default api;

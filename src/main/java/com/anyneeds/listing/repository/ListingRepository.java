@@ -4,12 +4,20 @@ import com.anyneeds.listing.entity.Listing;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
-public interface ListingRepository extends JpaRepository<Listing, Long> {
+public interface ListingRepository extends JpaRepository<Listing, Long>, JpaSpecificationExecutor<Listing> {
+
+    Page<Listing> findByStatusAndUserIdInOrderByCreatedAtDesc(Listing.ListingStatus status, List<Long> userIds, Pageable pageable);
+
+    @Query("SELECT DISTINCT l.city FROM Listing l WHERE l.status = 'ACTIVE' AND l.city IS NOT NULL")
+    List<String> findDistinctActiveCities();
 
     Page<Listing> findByStatusAndCategoryIdOrderByCreatedAtDesc(
         Listing.ListingStatus status, Long categoryId, Pageable pageable);
@@ -20,19 +28,14 @@ public interface ListingRepository extends JpaRepository<Listing, Long> {
         Long userId, Listing.ListingStatus status, Pageable pageable);
 
     @Query("""
-        SELECT l FROM Listing l
+        SELECT DISTINCT l.title FROM Listing l
         WHERE l.status = 'ACTIVE'
-        AND (:categoryId IS NULL OR l.category.id = :categoryId)
-        AND (:city IS NULL OR LOWER(l.city) LIKE :city)
-        AND (:area IS NULL OR LOWER(l.location) LIKE :area)
-        AND (:keyword IS NULL OR LOWER(l.title) LIKE :keyword
-             OR LOWER(l.description) LIKE :keyword)
-        ORDER BY l.createdAt DESC
+        AND LOWER(l.title) LIKE :q
+        ORDER BY l.title
         """)
-    Page<Listing> searchListings(
-        @Param("categoryId") Long categoryId,
-        @Param("city") String city,
-        @Param("area") String area,
-        @Param("keyword") String keyword,
-        Pageable pageable);
+    List<String> findTitleSuggestions(@Param("q") String q, Pageable pageable);
+
+    long countByUserIdAndStatus(Long userId, Listing.ListingStatus status);
+
+    long countByUserIdAndStatusNot(Long userId, Listing.ListingStatus status);
 }

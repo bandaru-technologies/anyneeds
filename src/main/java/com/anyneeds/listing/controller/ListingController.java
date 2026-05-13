@@ -12,6 +12,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/listings")
 @RequiredArgsConstructor
@@ -25,11 +28,30 @@ public class ListingController {
         @RequestParam(required = false) String city,
         @RequestParam(required = false) String area,
         @RequestParam(required = false) String keyword,
+        @RequestParam(required = false) Long sellerId,
+        @RequestParam(required = false) BigDecimal minPrice,
+        @RequestParam(required = false) BigDecimal maxPrice,
+        @RequestParam(required = false) String condition,
+        @RequestParam(required = false) Boolean negotiable,
+        @RequestParam(required = false) String postedIn,
         @RequestParam(defaultValue = "0") int page,
         @RequestParam(defaultValue = "20") int size) {
 
         Pageable pageable = PageRequest.of(page, size);
-        return ResponseEntity.ok(listingService.search(categoryId, city, area, keyword, pageable));
+        return ResponseEntity.ok(listingService.search(
+            categoryId, city, area, keyword, sellerId,
+            minPrice, maxPrice, condition, negotiable, postedIn, pageable));
+    }
+
+    @GetMapping("/suggestions")
+    public ResponseEntity<List<String>> suggestions(@RequestParam String q) {
+        return ResponseEntity.ok(listingService.getSuggestions(q));
+    }
+
+    @PatchMapping("/{id}/view")
+    public ResponseEntity<Void> trackView(@PathVariable Long id) {
+        listingService.incrementView(id);
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/{id}")

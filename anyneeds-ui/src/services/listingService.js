@@ -17,3 +17,8 @@ export const markAsSold = (id) => api.patch(`/api/listings/${id}/sold`);
 export const deleteListing = (id) => api.delete(`/api/listings/${id}`);
 
 export const getCategories = () => api.get('/api/categories');
+
+// Wishlist
+export const toggleWishlist = (listingId) => api.post(`/api/wishlist/${listingId}`);
+export const getWishlist = () => api.get('/api/wishlist');
+export const getWishlistIds = () => api.get('/api/wishlist/ids');

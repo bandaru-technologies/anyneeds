@@ -40,6 +40,16 @@ export default function RootLayout() {
             headerTitle: 'My Ads',
           }}
         />
+        <Stack.Screen
+          name="seller/[id]"
+          options={{
+            headerShown: true,
+            headerStyle: { backgroundColor: '#07111e' },
+            headerTintColor: '#00c8e0',
+            headerTitle: 'Seller Profile',
+            headerBackTitle: 'Back',
+          }}
+        />
       </Stack>
       <StatusBar style="light" />
     </AuthProvider>

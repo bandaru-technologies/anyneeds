@@ -3,6 +3,7 @@ import {
   View, Text, StyleSheet, TextInput, TouchableOpacity,
   KeyboardAvoidingView, Platform, ScrollView,
 } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
 import { useAuth } from '../context/AuthContext';
 import { authApi } from '../services/api';
@@ -53,7 +54,13 @@ export default function LoginScreen() {
     if (otp.length !== 6) { setError('Enter the 6-digit OTP'); return; }
     setLoading(true);
     try {
-      const { data } = await authApi.verifyOtp(phone, otp);
+      // Read referral code stored by deep link / referral flow
+      const refCode = await AsyncStorage.getItem('salepe_ref_code');
+      const { data } = await authApi.verifyOtp(phone, otp, refCode || undefined);
+      // Clear referral code after use
+      if (refCode) {
+        await AsyncStorage.removeItem('salepe_ref_code');
+      }
       await login(data.token, data.user);
       router.replace('/(tabs)/profile' as any);
     } catch (e: any) {
@@ -70,8 +77,8 @@ export default function LoginScreen() {
     >
       <ScrollView contentContainerStyle={s.scroll} keyboardShouldPersistTaps="handled">
         <View style={s.logoRow}>
-          <View style={s.logoBox}><Text style={s.logoBoxText}>AN</Text></View>
-          <Text style={s.logoText}>AnyNeeds<Text style={{ color: C.accent }}>.in</Text></Text>
+          <View style={s.logoBox}><Text style={s.logoBoxText}>SP</Text></View>
+          <Text style={s.logoText}>Sale<Text style={{ color: C.accent }}>Pe</Text></Text>
         </View>
 
         {step === 'phone' ? (

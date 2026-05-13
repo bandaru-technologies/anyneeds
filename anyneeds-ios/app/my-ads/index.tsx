@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import {
   View, Text, StyleSheet, FlatList, TouchableOpacity,
-  ActivityIndicator, Alert,
+  ActivityIndicator, Alert, Image,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useAuth } from '../../context/AuthContext';
@@ -9,7 +9,8 @@ import { listingApi } from '../../services/api';
 
 const C = {
   bg: '#f5f7fa', card: '#ffffff', border: 'rgba(0,0,0,0.09)',
-  accent: '#00c8e0', text: '#1e293b', textSub: '#475569', textMuted: '#94a3b8',
+  accent: '#00c8e0', accentDark: '#07111e',
+  text: '#1e293b', textSub: '#475569', textMuted: '#94a3b8',
   error: '#ef4444', success: '#22c55e', warning: '#f97316',
 };
 
@@ -27,7 +28,7 @@ export default function MyAdsScreen() {
   const fetchMyAds = () => {
     setLoading(true);
     listingApi.getMyListings()
-      .then((r) => setListings(r.data.content || []))
+      .then((r) => setListings(r.data.content || r.data || []))
       .catch(() => {})
       .finally(() => setLoading(false));
   };
@@ -76,11 +77,24 @@ export default function MyAdsScreen() {
       }
       renderItem={({ item: l }) => (
         <View style={s.adCard}>
-          <View style={s.adImg}>
-            <Text style={{ fontSize: 22, opacity: 0.2 }}>📷</Text>
-          </View>
+          {/* Thumbnail */}
+          {l.imageUrls && l.imageUrls.length > 0 ? (
+            <Image source={{ uri: l.imageUrls[0] }} style={s.adImg} resizeMode="cover" />
+          ) : (
+            <View style={[s.adImg, s.adImgPlaceholder]}>
+              <Text style={{ fontSize: 22, opacity: 0.2 }}>📷</Text>
+            </View>
+          )}
+
           <View style={s.adInfo}>
-            <Text style={s.adCat}>{l.categoryName}</Text>
+            <View style={s.adTopRow}>
+              <Text style={s.adCat}>{l.categoryName}</Text>
+              {l.boosted && (
+                <View style={s.boostedBadge}>
+                  <Text style={s.boostedBadgeText}>⚡ Boosted</Text>
+                </View>
+              )}
+            </View>
             <TouchableOpacity onPress={() => router.push(`/listing/${l.id}` as any)}>
               <Text style={s.adTitle} numberOfLines={1}>{l.title}</Text>
             </TouchableOpacity>
@@ -88,7 +102,11 @@ export default function MyAdsScreen() {
             <Text style={s.adLocation} numberOfLines={1}>
               {l.location && l.city ? `${l.location}, ${l.city}` : l.city || 'India'}
             </Text>
+            {l.viewCount > 0 && (
+              <Text style={s.adViews}>👁 {l.viewCount} views</Text>
+            )}
           </View>
+
           <View style={s.adRight}>
             <Text style={[s.adStatus, { color: l.status === 'ACTIVE' ? C.success : C.warning }]}>
               {l.status}
@@ -116,20 +134,27 @@ const s = StyleSheet.create({
   },
   postBtnText: { color: '#07111e', fontWeight: '700', fontSize: 14 },
   adCard: {
-    flexDirection: 'row', alignItems: 'center', gap: 12,
+    flexDirection: 'row', alignItems: 'flex-start', gap: 12,
     backgroundColor: C.card, borderWidth: 1, borderColor: C.border,
     borderRadius: 12, padding: 12, marginBottom: 10,
   },
   adImg: {
-    width: 68, height: 60, backgroundColor: '#f0f4f8', borderRadius: 8,
-    alignItems: 'center', justifyContent: 'center', flexShrink: 0,
-    borderWidth: 1, borderColor: C.border,
+    width: 68, height: 68, backgroundColor: '#f0f4f8', borderRadius: 8,
+    flexShrink: 0, borderWidth: 1, borderColor: C.border,
   },
+  adImgPlaceholder: { alignItems: 'center', justifyContent: 'center' },
   adInfo: { flex: 1 },
+  adTopRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 2 },
   adCat: { fontSize: 9, color: C.accent, fontWeight: '700', textTransform: 'uppercase' },
+  boostedBadge: {
+    backgroundColor: 'rgba(0,200,224,0.12)', borderRadius: 4,
+    paddingHorizontal: 5, paddingVertical: 2, borderWidth: 1, borderColor: 'rgba(0,200,224,0.25)',
+  },
+  boostedBadgeText: { color: C.accent, fontSize: 9, fontWeight: '700' },
   adTitle: { fontSize: 13, fontWeight: '600', color: C.text, marginTop: 2 },
   adPrice: { fontSize: 14, fontWeight: '800', color: C.text, marginTop: 2 },
   adLocation: { fontSize: 11, color: C.textMuted, marginTop: 2 },
+  adViews: { fontSize: 11, color: C.textSub, marginTop: 3 },
   adRight: { alignItems: 'flex-end', gap: 6 },
   adStatus: { fontSize: 10, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 0.3 },
   soldBtn: {

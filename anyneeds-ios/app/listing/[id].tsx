@@ -1,15 +1,24 @@
 import React, { useEffect, useState } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity,
-  ActivityIndicator, Linking, Image,
+  ActivityIndicator, Linking, Image, Share, Alert,
 } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { listingApi } from '../../services/api';
+import { listingApi, wishlistApi, conversationApi } from '../../services/api';
+import { useAuth } from '../../context/AuthContext';
 
 const C = {
   bg: '#f5f7fa', card: '#ffffff', border: 'rgba(0,0,0,0.09)',
-  accent: '#00c8e0', text: '#1e293b', textSub: '#475569', textMuted: '#94a3b8',
-  success: '#22c55e', warning: '#f97316',
+  accent: '#00c8e0', accentDark: '#07111e',
+  text: '#1e293b', textSub: '#475569', textMuted: '#94a3b8',
+  error: '#ef4444', success: '#22c55e', warning: '#f97316',
+};
+
+const CONDITION_LABELS: Record<string, string> = {
+  NEW: 'Brand New',
+  LIKE_NEW: 'Like New',
+  GOOD: 'Good',
+  FAIR: 'Fair',
 };
 
 function fmtPrice(price: any) {
@@ -20,9 +29,13 @@ function fmtPrice(price: any) {
 export default function ListingDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
+  const { isLoggedIn } = useAuth();
   const [listing, setListing] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [activeImg, setActiveImg] = useState(0);
+  const [saved, setSaved] = useState(false);
+  const [savingWishlist, setSavingWishlist] = useState(false);
+  const [chatLoading, setChatLoading] = useState(false);
 
   useEffect(() => {
     listingApi.getListing(Number(id))
@@ -40,6 +53,63 @@ export default function ListingDetailScreen() {
   if (!listing) return null;
 
   const images: string[] = listing.imageUrls || [];
+
+  const handleToggleSave = async () => {
+    if (!isLoggedIn) {
+      Alert.alert('Login Required', 'Please login to save listings', [
+        { text: 'Login', onPress: () => router.push('/login' as any) },
+        { text: 'Cancel', style: 'cancel' },
+      ]);
+      return;
+    }
+    setSavingWishlist(true);
+    try {
+      await wishlistApi.toggle(listing.id);
+      setSaved((prev) => !prev);
+    } catch {
+      Alert.alert('Error', 'Failed to update wishlist');
+    } finally {
+      setSavingWishlist(false);
+    }
+  };
+
+  const handleWhatsAppShare = async () => {
+    const priceText = listing.price ? `₹${Number(listing.price).toLocaleString('en-IN')}` : 'Price on Request';
+    const city = listing.city || 'India';
+    const message = `🏷 *${listing.title}*\n💰 ${priceText}\n📍 ${city}\n\nCheck it out on SalePe!`;
+    try {
+      await Share.share({ message });
+    } catch {
+      // share dialog dismissed
+    }
+  };
+
+  const handleChatWithSeller = async () => {
+    if (!isLoggedIn) {
+      Alert.alert('Login Required', 'Please login to chat with sellers', [
+        { text: 'Login', onPress: () => router.push('/login' as any) },
+        { text: 'Cancel', style: 'cancel' },
+      ]);
+      return;
+    }
+    setChatLoading(true);
+    try {
+      await conversationApi.create(listing.id);
+      Alert.alert(
+        'Chat Started!',
+        'Conversation started. Go to Messages to continue.',
+        [
+          { text: 'Go to Messages', onPress: () => router.push('/(tabs)/messages' as any) },
+          { text: 'OK', style: 'cancel' },
+        ]
+      );
+    } catch (e: any) {
+      const msg = e?.response?.data?.error || 'Failed to start conversation';
+      Alert.alert('Error', msg);
+    } finally {
+      setChatLoading(false);
+    }
+  };
 
   return (
     <ScrollView style={s.container} showsVerticalScrollIndicator={false}>
@@ -65,6 +135,16 @@ export default function ListingDetailScreen() {
             ))}
           </ScrollView>
         )}
+
+        {/* Save and Share buttons */}
+        <View style={s.imgActions}>
+          <TouchableOpacity style={s.imgActionBtn} onPress={handleToggleSave} disabled={savingWishlist}>
+            <Text style={{ fontSize: 22 }}>{saved ? '❤️' : '🤍'}</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={s.imgActionBtn} onPress={handleWhatsAppShare}>
+            <Text style={{ fontSize: 22 }}>📤</Text>
+          </TouchableOpacity>
+        </View>
       </View>
 
       {/* Main info */}
@@ -75,6 +155,18 @@ export default function ListingDetailScreen() {
 
         <View style={s.divider} />
 
+        {listing.negotiable && (
+          <View style={s.metaItem}>
+            <Text style={s.metaLabel}>💬 Negotiable</Text>
+            <Text style={[s.metaValue, { color: C.success }]}>✓ Negotiable</Text>
+          </View>
+        )}
+        {listing.condition && (
+          <View style={s.metaItem}>
+            <Text style={s.metaLabel}>🔖 Condition</Text>
+            <Text style={s.metaValue}>{CONDITION_LABELS[listing.condition] || listing.condition}</Text>
+          </View>
+        )}
         {listing.location && (
           <View style={s.metaItem}>
             <Text style={s.metaLabel}>🏘 Area</Text>
@@ -115,18 +207,37 @@ export default function ListingDetailScreen() {
             </View>
             <View>
               <Text style={s.sellerName}>{listing.user?.name || 'Seller'}</Text>
-              <Text style={s.sellerSince}>AnyNeeds Member</Text>
+              <Text style={s.sellerSince}>SalePe Member</Text>
             </View>
           </View>
           <View style={s.contactBox}>
             <Text style={s.contactLabel}>📞 CONTACT NUMBER</Text>
             <Text style={s.contactNum}>+91 {listing.user?.phoneNumber}</Text>
           </View>
+
+          {/* Chat with Seller */}
+          <TouchableOpacity
+            style={s.chatBtn}
+            onPress={handleChatWithSeller}
+            disabled={chatLoading}
+          >
+            <Text style={s.chatBtnText}>{chatLoading ? 'Starting Chat...' : '💬 Chat with Seller'}</Text>
+          </TouchableOpacity>
+
+          {/* WhatsApp share */}
+          <TouchableOpacity
+            style={s.whatsappBtn}
+            onPress={handleWhatsAppShare}
+          >
+            <Text style={s.whatsappBtnText}>📤 Share via WhatsApp</Text>
+          </TouchableOpacity>
+
+          {/* Call */}
           <TouchableOpacity
             style={s.callBtn}
             onPress={() => Linking.openURL(`tel:+91${listing.user?.phoneNumber}`)}
           >
-            <Text style={s.callBtnText}>Call Seller</Text>
+            <Text style={s.callBtnText}>📞 Call Seller</Text>
           </TouchableOpacity>
         </View>
       )}
@@ -144,6 +255,16 @@ const s = StyleSheet.create({
   thumbRow: { maxHeight: 72 },
   thumb: { width: 60, height: 56, borderRadius: 6, borderWidth: 2, borderColor: 'transparent' },
   thumbActive: { borderColor: C.accent },
+  imgActions: {
+    position: 'absolute', top: 10, right: 10,
+    flexDirection: 'row', gap: 8,
+  },
+  imgActionBtn: {
+    backgroundColor: 'rgba(255,255,255,0.9)', borderRadius: 20,
+    width: 38, height: 38, alignItems: 'center', justifyContent: 'center',
+    shadowColor: '#000', shadowOpacity: 0.15, shadowRadius: 4, shadowOffset: { width: 0, height: 2 },
+    elevation: 3,
+  },
 
   card: {
     backgroundColor: C.card, borderWidth: 1, borderColor: C.border,
@@ -174,6 +295,16 @@ const s = StyleSheet.create({
   },
   contactLabel: { fontSize: 10, fontWeight: '700', color: C.textMuted, letterSpacing: 0.5, marginBottom: 4 },
   contactNum: { fontSize: 20, fontWeight: '800', color: C.accent },
+  chatBtn: {
+    backgroundColor: 'rgba(0,200,224,0.1)', borderWidth: 1.5, borderColor: C.accent,
+    borderRadius: 10, paddingVertical: 13, alignItems: 'center', marginBottom: 10,
+  },
+  chatBtnText: { color: C.accent, fontWeight: '700', fontSize: 15 },
+  whatsappBtn: {
+    backgroundColor: 'rgba(34,197,94,0.08)', borderWidth: 1.5, borderColor: 'rgba(34,197,94,0.4)',
+    borderRadius: 10, paddingVertical: 13, alignItems: 'center', marginBottom: 10,
+  },
+  whatsappBtnText: { color: C.success, fontWeight: '700', fontSize: 15 },
   callBtn: { backgroundColor: C.accent, borderRadius: 10, paddingVertical: 14, alignItems: 'center' },
   callBtnText: { color: '#07111e', fontWeight: '700', fontSize: 15 },
 });

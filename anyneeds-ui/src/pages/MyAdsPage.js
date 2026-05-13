@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { getMyListings, markAsSold, deleteListing } from '../services/listingService';
-
+import BoostModal from '../components/BoostModal';
 import './MyAdsPage.css';
 
 function formatPrice(price) {
@@ -15,6 +15,7 @@ export default function MyAdsPage() {
   const navigate = useNavigate();
   const [listings, setListings] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [boostTarget, setBoostTarget] = useState(null);
 
   useEffect(() => {
     if (!isLoggedIn) navigate('/login');
@@ -49,7 +50,10 @@ export default function MyAdsPage() {
       <div className="container">
         <div className="my-ads-header">
           <h1 className="page-title">My Ads</h1>
-          <Link to="/post-ad" className="btn btn-primary">+ Post New Ad</Link>
+          <div style={{ display: 'flex', gap: 10 }}>
+            <Link to="/analytics" className="btn btn-ghost">📊 Analytics</Link>
+            <Link to="/post-ad" className="btn btn-primary">+ Post New Ad</Link>
+          </div>
         </div>
 
         {listings.length === 0 ? (
@@ -63,7 +67,8 @@ export default function MyAdsPage() {
         ) : (
           <div className="my-ads-list">
             {listings.map((l) => (
-              <div key={l.id} className="my-ad-card">
+              <div key={l.id} className={`my-ad-card ${l.boosted ? 'my-ad-card-boosted' : ''}`}>
+                {l.boosted && <span className="my-ad-boost-badge">⚡ Boosted</span>}
                 <div className="my-ad-img">
                   {l.imageUrls?.[0] ? (
                     <img src={l.imageUrls[0]} alt={l.title} />
@@ -76,28 +81,40 @@ export default function MyAdsPage() {
                   <Link to={`/listings/${l.id}`} className="my-ad-title">{l.title}</Link>
                   <p className="my-ad-price">{formatPrice(l.price)}</p>
                   <p className="my-ad-location">{l.city || l.location || 'India'}</p>
+                  <div className="my-ad-stats">
+                    <span title="Views">👁 {l.viewCount || 0}</span>
+                  </div>
                 </div>
                 <div className="my-ad-actions">
                   <span className={`badge badge-${l.status.toLowerCase()}`}>{l.status}</span>
                   {l.status === 'ACTIVE' && (
                     <>
-                      <Link to={`/edit-ad/${l.id}`} className="btn btn-ghost action-btn">
-                        Edit
-                      </Link>
-                      <button className="btn btn-ghost action-btn" onClick={() => handleMarkSold(l.id)}>
-                        Mark Sold
+                      <button
+                        className="btn btn-boost action-btn"
+                        onClick={() => setBoostTarget(l)}
+                        title="Boost this listing"
+                      >
+                        ⚡ Boost
                       </button>
+                      <Link to={`/edit-ad/${l.id}`} className="btn btn-ghost action-btn">Edit</Link>
+                      <button className="btn btn-ghost action-btn" onClick={() => handleMarkSold(l.id)}>Mark Sold</button>
                     </>
                   )}
-                  <button className="btn btn-danger action-btn" onClick={() => handleDelete(l.id)}>
-                    Delete
-                  </button>
+                  <button className="btn btn-danger action-btn" onClick={() => handleDelete(l.id)}>Delete</button>
                 </div>
               </div>
             ))}
           </div>
         )}
       </div>
+
+      {boostTarget && (
+        <BoostModal
+          listing={boostTarget}
+          onClose={() => setBoostTarget(null)}
+          onSuccess={fetchMyAds}
+        />
+      )}
     </div>
   );
 }

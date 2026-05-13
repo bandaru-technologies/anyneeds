@@ -26,7 +26,7 @@ public class AuthController {
 
     @PostMapping("/verify-otp")
     public ResponseEntity<AuthResponse> verifyOtp(@Valid @RequestBody VerifyOtpRequest req) {
-        AuthResponse response = authService.verifyOtp(req.getPhoneNumber(), req.getOtpCode());
+        AuthResponse response = authService.verifyOtp(req.getPhoneNumber(), req.getOtpCode(), req.getReferralCode());
         return ResponseEntity.ok(response);
     }
 }

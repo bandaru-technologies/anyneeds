@@ -1,6 +1,7 @@
 package com.anyneeds.user.controller;
 
 import com.anyneeds.common.JwtUtil;
+import com.anyneeds.user.dto.SellerPublicDto;
 import com.anyneeds.user.dto.UserProfileDto;
 import com.anyneeds.user.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -20,6 +21,13 @@ public class UserController {
     public ResponseEntity<UserProfileDto> getProfile(HttpServletRequest request) {
         Long userId = (Long) request.getAttribute("userId");
         return ResponseEntity.ok(userService.getProfile(userId));
+    }
+
+    @GetMapping("/{userId}/public")
+    public ResponseEntity<SellerPublicDto> getSellerPublicProfile(
+            @PathVariable Long userId, HttpServletRequest request) {
+        Long viewerId = (Long) request.getAttribute("userId");
+        return ResponseEntity.ok(userService.getSellerPublicProfile(userId, viewerId));
     }
 
     @PutMapping("/me")

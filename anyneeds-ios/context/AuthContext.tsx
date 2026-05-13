@@ -23,25 +23,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    AsyncStorage.getItem('anyneeds_user').then((stored) => {
+    AsyncStorage.getItem('salepe_user').then((stored) => {
       if (stored) setUser(JSON.parse(stored));
       setLoading(false);
     });
   }, []);
 
   const login = useCallback(async (token: string, userData: User) => {
-    await AsyncStorage.setItem('anyneeds_token', token);
-    await AsyncStorage.setItem('anyneeds_user', JSON.stringify(userData));
+    await AsyncStorage.setItem('salepe_token', token);
+    await AsyncStorage.setItem('salepe_user', JSON.stringify(userData));
     setUser(userData);
   }, []);
 
   const logout = useCallback(async () => {
-    await AsyncStorage.multiRemove(['anyneeds_token', 'anyneeds_user']);
+    await AsyncStorage.multiRemove(['salepe_token', 'salepe_user']);
     setUser(null);
   }, []);
 
   const updateUser = useCallback(async (userData: User) => {
-    await AsyncStorage.setItem('anyneeds_user', JSON.stringify(userData));
+    await AsyncStorage.setItem('salepe_user', JSON.stringify(userData));
     setUser(userData);
   }, []);
 

@@ -30,7 +30,7 @@ public class JwtFilter extends OncePerRequestFilter {
         String path = request.getRequestURI();
         String method = request.getMethod();
 
-        if ("OPTIONS".equals(method) || isPublicPath(path, method)) {
+        if ("OPTIONS".equals(method) || path.startsWith("/ws") || isPublicPath(path, method)) {
             chain.doFilter(request, response);
             return;
         }
@@ -62,8 +62,14 @@ public class JwtFilter extends OncePerRequestFilter {
         // /api/listings/my and /api/listings/my/{id} require auth
         if ("GET".equals(method)) {
             if (path.equals("/api/listings")) return true;
+            if (path.equals("/api/listings/suggestions")) return true;
+            if (path.equals("/api/listings/featured")) return true;
             if (path.matches("/api/listings/\\d+")) return true;
+            if (path.matches("/api/users/\\d+/public")) return true;
         }
+        if ("PATCH".equals(method) && path.matches("/api/listings/\\d+/view")) return true;
+        if (path.startsWith("/api/og/")) return true;
+        if (path.equals("/sitemap.xml")) return true;
         return false;
     }
 }

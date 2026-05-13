@@ -52,7 +52,9 @@ export default function LoginPage() {
     if (otp.length !== 6) { setError('Enter the 6-digit OTP'); return; }
     setLoading(true);
     try {
-      const { data } = await verifyOtp(phone, otp);
+      const refCode = localStorage.getItem('salepe_ref_code');
+      const { data } = await verifyOtp(phone, otp, refCode);
+      if (refCode) localStorage.removeItem('salepe_ref_code');
       login(data.token, data.user);
       navigate(from, { replace: true });
     } catch (err) {

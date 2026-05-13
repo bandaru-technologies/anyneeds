@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, TextInput,
-  TouchableOpacity, ActivityIndicator,
+  TouchableOpacity, ActivityIndicator, Image,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { listingApi } from '../../services/api';
 
 const C = {
   bg: '#f5f7fa', card: '#ffffff', border: 'rgba(0,0,0,0.09)',
-  accent: '#00c8e0', accentDark: '#00a8be',
+  accent: '#00c8e0', accentDark: '#07111e',
   text: '#1e293b', textSub: '#475569', textMuted: '#94a3b8',
+  error: '#ef4444', success: '#22c55e', warning: '#f97316',
 };
 
 const CATEGORIES = [
@@ -76,9 +77,12 @@ export default function HomeScreen() {
       {/* Hero */}
       <View style={s.hero}>
         <Text style={s.heroTitle}>
-          AnyNeeds<Text style={{ color: C.accent }}>.in</Text>
+          Everything On Sale,
         </Text>
-        <Text style={s.heroSub}>Buy, Sell &amp; Find Anything Near You</Text>
+        <Text style={s.heroTitleAccent}>Near You</Text>
+        <Text style={s.heroSub}>
+          Discover nearby deals, connect with trusted buyers and sellers across India.
+        </Text>
 
         <View style={s.searchRow}>
           <TextInput
@@ -134,9 +138,26 @@ export default function HomeScreen() {
                 key={l.id} style={s.listingCard}
                 onPress={() => router.push(`/listing/${l.id}` as any)}
               >
-                <View style={s.listingImg}>
-                  <Text style={{ fontSize: 28, opacity: 0.2 }}>📷</Text>
-                </View>
+                {/* Card image */}
+                {l.imageUrls && l.imageUrls.length > 0 ? (
+                  <Image
+                    source={{ uri: l.imageUrls[0] }}
+                    style={s.listingImg}
+                    resizeMode="cover"
+                  />
+                ) : (
+                  <View style={[s.listingImg, s.listingImgPlaceholder]}>
+                    <Text style={{ fontSize: 28, opacity: 0.2 }}>📷</Text>
+                  </View>
+                )}
+
+                {/* Sponsored badge */}
+                {l.boosted && (
+                  <View style={s.sponsoredBadge}>
+                    <Text style={s.sponsoredBadgeText}>⚡ Sponsored</Text>
+                  </View>
+                )}
+
                 <View style={s.listingBody}>
                   <Text style={s.listingCat}>{l.categoryName}</Text>
                   <View style={s.titlePriceRow}>
@@ -144,6 +165,13 @@ export default function HomeScreen() {
                     <Text style={s.listingPrice}>{fmtPrice(l.price)}</Text>
                   </View>
                   <Text style={s.listingCity} numberOfLines={1}>{fmtLocation(l)}</Text>
+
+                  {/* Negotiable badge */}
+                  {l.negotiable && (
+                    <View style={s.negoBadge}>
+                      <Text style={s.negoBadgeText}>Nego</Text>
+                    </View>
+                  )}
                 </View>
               </TouchableOpacity>
             ))}
@@ -153,7 +181,7 @@ export default function HomeScreen() {
 
       {/* CTA */}
       <TouchableOpacity style={s.ctaBanner} onPress={() => router.push('/post-ad' as any)}>
-        <Text style={s.ctaBannerTitle}>Sell Faster on AnyNeeds</Text>
+        <Text style={s.ctaBannerTitle}>Sell Faster on SalePe</Text>
         <Text style={s.ctaBannerSub}>Post your ad for FREE →</Text>
       </TouchableOpacity>
 
@@ -171,8 +199,9 @@ const s = StyleSheet.create({
     paddingTop: 24,
     paddingBottom: 28,
   },
-  heroTitle: { fontSize: 24, fontWeight: '800', color: '#fff' },
-  heroSub: { fontSize: 13, color: 'rgba(255,255,255,0.6)', marginTop: 4, marginBottom: 16 },
+  heroTitle: { fontSize: 26, fontWeight: '800', color: '#fff', lineHeight: 32 },
+  heroTitleAccent: { fontSize: 26, fontWeight: '800', color: C.accent, marginBottom: 8, lineHeight: 32 },
+  heroSub: { fontSize: 13, color: 'rgba(255,255,255,0.6)', marginBottom: 16, lineHeight: 18 },
   searchRow: { flexDirection: 'row', gap: 8 },
   searchInput: {
     flex: 1, backgroundColor: 'rgba(255,255,255,0.1)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.15)',
@@ -201,13 +230,26 @@ const s = StyleSheet.create({
     width: '48%', backgroundColor: C.card,
     borderWidth: 1, borderColor: C.border, borderRadius: 12, overflow: 'hidden',
   },
-  listingImg: { height: 96, backgroundColor: '#f0f4f8', alignItems: 'center', justifyContent: 'center' },
+  listingImg: { width: '100%', height: 96 },
+  listingImgPlaceholder: { backgroundColor: '#f0f4f8', alignItems: 'center', justifyContent: 'center' },
+  sponsoredBadge: {
+    position: 'absolute', top: 6, left: 6,
+    backgroundColor: 'rgba(249,115,22,0.9)', borderRadius: 6,
+    paddingHorizontal: 6, paddingVertical: 2,
+  },
+  sponsoredBadgeText: { fontSize: 9, color: '#fff', fontWeight: '700' },
   listingBody: { padding: 10 },
   listingCat: { fontSize: 9, color: C.accent, fontWeight: '700', textTransform: 'uppercase' },
   titlePriceRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', gap: 4, marginTop: 2 },
   listingTitle: { fontSize: 12, fontWeight: '600', color: C.text, flex: 1 },
   listingPrice: { fontSize: 12, fontWeight: '800', color: C.text, flexShrink: 0 },
   listingCity: { fontSize: 10, color: C.textMuted, marginTop: 4 },
+  negoBadge: {
+    alignSelf: 'flex-start', marginTop: 5,
+    backgroundColor: 'rgba(34,197,94,0.1)', borderWidth: 1, borderColor: 'rgba(34,197,94,0.3)',
+    borderRadius: 4, paddingHorizontal: 5, paddingVertical: 2,
+  },
+  negoBadgeText: { fontSize: 9, color: C.success, fontWeight: '700' },
 
   empty: { alignItems: 'center', padding: 32 },
   ctaBtn: { backgroundColor: C.accent, paddingHorizontal: 20, paddingVertical: 10, borderRadius: 8 },

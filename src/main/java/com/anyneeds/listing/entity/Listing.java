@@ -58,6 +58,21 @@ public class Listing {
     @Builder.Default
     private ListingStatus status = ListingStatus.ACTIVE;
 
+    @Enumerated(EnumType.STRING)
+    @Column(length = 20)
+    private ListingCondition condition;
+
+    @Column(name = "negotiable")
+    @Builder.Default
+    private Boolean negotiable = false;
+
+    @Column(name = "view_count")
+    @Builder.Default
+    private Long viewCount = 0L;
+
+    @Column(name = "boosted_until")
+    private LocalDateTime boostedUntil;
+
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
@@ -68,5 +83,9 @@ public class Listing {
 
     public enum ListingStatus {
         ACTIVE, SOLD, EXPIRED, DELETED
+    }
+
+    public enum ListingCondition {
+        NEW, LIKE_NEW, GOOD, FAIR
     }
 }
