@@ -1,5 +1,0 @@
-{
-  "buildCommand": "cd salepe-ui && npm install && npm run build",
-  "outputDirectory": "salepe-ui/build",
-  "rewrites": [{ "source": "/(.*)", "destination": "/" }]
-}
