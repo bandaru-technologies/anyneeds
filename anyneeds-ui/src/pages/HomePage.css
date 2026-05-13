@@ -98,27 +98,43 @@
 .hero-city-select-wrap {
   display: flex;
   align-items: center;
-  padding: 0 14px;
-  gap: 8px;
+  padding: 0 10px 0 6px;
+  gap: 4px;
   min-width: 160px;
   border-right: 1px solid rgba(255,255,255,0.12);
 }
 
-.hero-city-icon { color: rgba(255,255,255,0.5); flex-shrink: 0; }
+.hero-locate-btn {
+  background: none;
+  border: none;
+  padding: 6px;
+  border-radius: 6px;
+  color: rgba(255,255,255,0.5);
+  cursor: pointer;
+  flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  transition: color 0.2s, background 0.2s;
+}
+.hero-locate-btn:hover { color: var(--primary); background: rgba(0,200,224,0.1); }
+.hero-locate-detecting { color: var(--primary); }
 
-.hero-city-select {
+@keyframes hero-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+.hero-locate-spin { animation: hero-spin 1s linear infinite; }
+
+.hero-city-input {
   background: transparent;
   border: none;
   outline: none;
   color: #fff;
   font-size: 14px;
-  cursor: pointer;
   width: 100%;
   padding: 11px 0;
-  appearance: none;
-  -webkit-appearance: none;
 }
-.hero-city-select option { background: #1a2f5e; color: #fff; }
+.hero-city-input::placeholder { color: rgba(255,255,255,0.45); }
+.hero-city-input::-webkit-calendar-picker-indicator { display: none; }
 
 .hero-search-btn {
   display: flex;

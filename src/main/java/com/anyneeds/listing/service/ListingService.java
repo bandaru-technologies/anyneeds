@@ -21,10 +21,30 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
 public class ListingService {
+
+    private static final Map<String, String> CITY_ALIASES = Map.ofEntries(
+        Map.entry("bengaluru", "Bangalore"),
+        Map.entry("bengalore", "Bangalore"),
+        Map.entry("bangaluru", "Bangalore"),
+        Map.entry("blr", "Bangalore"),
+        Map.entry("bombay", "Mumbai"),
+        Map.entry("madras", "Chennai"),
+        Map.entry("calcutta", "Kolkata"),
+        Map.entry("new delhi", "Delhi"),
+        Map.entry("ncr", "Delhi"),
+        Map.entry("gurgaon", "Gurugram"),
+        Map.entry("greater noida", "Noida")
+    );
+
+    private String normalizeCity(String city) {
+        if (city == null || city.isBlank()) return city;
+        return CITY_ALIASES.getOrDefault(city.trim().toLowerCase(), city.trim());
+    }
 
     private final ListingRepository listingRepository;
     private final CategoryService categoryService;
@@ -70,6 +90,7 @@ public class ListingService {
     public Page<ListingResponse> search(Long categoryId, String city, String area, String keyword, Long sellerId,
                                         BigDecimal minPrice, BigDecimal maxPrice, String condition,
                                         Boolean negotiable, String postedIn, Pageable pageable) {
+        city = normalizeCity(city);
         String cityParam = (city != null && !city.isBlank()) ? "%" + city.toLowerCase() + "%" : null;
         String areaParam = (area != null && !area.isBlank()) ? "%" + area.toLowerCase() + "%" : null;
         String keywordParam = (keyword != null && !keyword.isBlank()) ? "%" + keyword.toLowerCase() + "%" : null;

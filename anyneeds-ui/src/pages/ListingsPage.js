@@ -3,6 +3,7 @@ import { Link, useSearchParams } from 'react-router-dom';
 import ListingCard from '../components/ListingCard';
 import { getListings, getCategories } from '../services/listingService';
 import { useGeoCity } from '../hooks/useGeoCity';
+import { normalizeCity } from '../data/cityAliases';
 import api from '../services/api';
 import './ListingsPage.css';
 
@@ -77,7 +78,7 @@ export default function ListingsPage() {
   const buildParams = useCallback(() => {
     const p = {};
     if (categoryId) p.categoryId = categoryId;
-    if (city) p.city = city;
+    if (city) p.city = normalizeCity(city);
     if (area) p.area = area;
     if (keyword) p.keyword = keyword;
     if (minPrice) p.minPrice = minPrice;
@@ -246,7 +247,7 @@ export default function ListingsPage() {
                   <button
                     type="button"
                     className={`city-geo-btn ${detecting ? 'detecting' : ''}`}
-                    onClick={() => detect((loc) => { setCity(loc.city); setCityDetected(true); })}
+                    onClick={() => detect((loc) => { setCity(normalizeCity(loc.city)); setCityDetected(true); })}
                     title="Detect my location"
                   >
                     {detecting ? <span className="geo-spin-sm" /> : '📍'}

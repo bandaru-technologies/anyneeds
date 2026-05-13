@@ -5,6 +5,7 @@ import ListingCard from '../components/ListingCard';
 import { getCategories, getListings } from '../services/listingService';
 import { useRecentlyViewed } from '../hooks/useRecentlyViewed';
 import { useAuth } from '../context/AuthContext';
+import { useGeoCity } from '../hooks/useGeoCity';
 import api from '../services/api';
 import './HomePage.css';
 
@@ -35,6 +36,7 @@ export default function HomePage() {
   const navigate = useNavigate();
   const { recentlyViewed } = useRecentlyViewed();
   const { isLoggedIn } = useAuth();
+  const { detecting, detect, autoDetect } = useGeoCity();
   const [featured, setFeatured] = useState([]);
   const [followingFeed, setFollowingFeed] = useState([]);
 
@@ -100,6 +102,14 @@ export default function HomePage() {
       .catch(() => {});
   }, [isLoggedIn]);
 
+  useEffect(() => {
+    autoDetect(({ city }) => { if (city) setSearchCity(city); });
+  }, [autoDetect]);
+
+  const handleLocate = () => {
+    detect(({ city }) => { if (city) setSearchCity(city); });
+  };
+
   const handleSearch = (e) => {
     e.preventDefault();
     const params = new URLSearchParams();
@@ -139,18 +149,34 @@ export default function HomePage() {
               />
             </div>
             <div className="hero-city-select-wrap">
-              <svg className="hero-city-icon" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
-                <circle cx="12" cy="9" r="2.5"/>
-              </svg>
-              <select
-                className="hero-city-select"
+              <button
+                type="button"
+                className={`hero-locate-btn ${detecting ? 'hero-locate-detecting' : ''}`}
+                onClick={handleLocate}
+                title="Detect my location"
+              >
+                {detecting ? (
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="hero-locate-spin">
+                    <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+                  </svg>
+                ) : (
+                  <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
+                    <circle cx="12" cy="9" r="2.5"/>
+                  </svg>
+                )}
+              </button>
+              <input
+                className="hero-city-input"
+                type="text"
+                placeholder={detecting ? 'Detecting...' : 'City'}
                 value={searchCity}
                 onChange={(e) => setSearchCity(e.target.value)}
-              >
-                <option value="">All Cities</option>
-                {CITIES.map((c) => <option key={c} value={c}>{c}</option>)}
-              </select>
+                list="hero-city-list"
+              />
+              <datalist id="hero-city-list">
+                {CITIES.map((c) => <option key={c} value={c} />)}
+              </datalist>
             </div>
             <button className="hero-search-btn" type="submit">
               <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">

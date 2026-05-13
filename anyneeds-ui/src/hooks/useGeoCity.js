@@ -1,4 +1,5 @@
 import { useState, useCallback } from 'react';
+import { normalizeCity } from '../data/cityAliases';
 
 async function reverseGeocode(lat, lon) {
   const res = await fetch(
@@ -30,7 +31,9 @@ async function reverseGeocode(lat, lon) {
   // "Kalyan Nagar, Bengaluru" or just "Bengaluru"
   const display = locality && city ? `${locality}, ${city}` : city;
 
-  return { city, locality, state, display };
+  const normalizedCity = normalizeCity(city);
+  const normalizedDisplay = locality && normalizedCity ? `${locality}, ${normalizedCity}` : normalizedCity;
+  return { city: normalizedCity, locality, state, display: normalizedDisplay };
 }
 
 export function useGeoCity() {
