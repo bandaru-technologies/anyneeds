@@ -39,4 +39,7 @@ public class User {
     @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+    @Column(name = "referral_code", unique = true, length = 12)
+    private String referralCode;
 }

@@ -22,6 +22,10 @@ public class ListingResponse {
     private String city;
     private String state;
     private String status;
+    private String condition;
+    private Boolean negotiable;
+    private Long viewCount;
+    private boolean boosted;
     private LocalDateTime createdAt;
 
     public static ListingResponse from(Listing l) {
@@ -38,6 +42,10 @@ public class ListingResponse {
             .city(l.getCity())
             .state(l.getState())
             .status(l.getStatus().name())
+            .condition(l.getCondition() != null ? l.getCondition().name() : null)
+            .negotiable(l.getNegotiable())
+            .viewCount(l.getViewCount())
+            .boosted(l.getBoostedUntil() != null && l.getBoostedUntil().isAfter(java.time.LocalDateTime.now()))
             .createdAt(l.getCreatedAt())
             .build();
     }

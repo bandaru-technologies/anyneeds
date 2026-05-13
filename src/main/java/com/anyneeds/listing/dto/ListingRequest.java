@@ -33,4 +33,8 @@ public class ListingRequest {
 
     @Size(max = 100)
     private String state;
+
+    private String condition; // NEW, LIKE_NEW, GOOD, FAIR
+
+    private Boolean negotiable;
 }

@@ -1,0 +1,141 @@
+.listings-page { background: var(--bg); min-height: 100vh; padding: 24px 0 60px; }
+
+.breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--text-muted); margin-bottom: 16px; }
+.breadcrumb a { color: var(--text-muted); text-decoration: none; }
+.breadcrumb a:hover { color: var(--primary); }
+
+.active-filters { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+.filter-chip {
+  display: flex; align-items: center; gap: 6px;
+  background: rgba(0,200,224,0.08); border: 1px solid rgba(0,200,224,0.25);
+  color: var(--primary); font-size: 12px; font-weight: 600;
+  padding: 4px 10px; border-radius: 20px;
+}
+.filter-chip button { background: none; border: none; color: var(--primary); font-size: 15px; cursor: pointer; line-height: 1; padding: 0; }
+
+.listings-layout { display: grid; grid-template-columns: 240px 1fr; gap: 24px; align-items: start; }
+
+/* Sidebar */
+.filters-sidebar {
+  background: var(--bg-card);
+  border: 1px solid rgba(0,0,0,0.08);
+  border-radius: var(--radius);
+  overflow: hidden;
+  position: sticky; top: 76px;
+}
+
+.filters-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 16px;
+  background: rgba(0,0,0,0.02);
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+}
+.filters-header h3 { font-size: 14px; font-weight: 700; color: var(--text-primary); }
+.clear-all-btn { background: none; border: none; color: var(--text-muted); font-size: 12px; cursor: pointer; }
+.clear-all-btn:hover { color: var(--primary); }
+
+.filters-body { padding: 16px; display: flex; flex-direction: column; gap: 14px; }
+
+.filter-group { display: flex; flex-direction: column; gap: 6px; }
+.filter-label { font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.4px; display: flex; align-items: center; gap: 6px; margin-bottom: 2px; }
+.detected-tag { color: var(--primary); font-size: 10px; }
+
+.city-filter-wrap { display: flex; gap: 6px; }
+.city-filter-input { flex: 1; }
+.city-geo-btn {
+  background: rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.12);
+  border-radius: var(--radius-sm); width: 36px; height: 36px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; cursor: pointer; transition: all 0.15s; flex-shrink: 0;
+}
+.city-geo-btn:hover { border-color: var(--primary); background: var(--primary-light); }
+.city-geo-btn.detecting { opacity: 0.6; cursor: wait; }
+.city-geo-error { font-size: 11px; color: #ef4444; margin-top: 4px; }
+
+/* Price range */
+.price-range-row { display: flex; align-items: center; gap: 6px; }
+.price-input { flex: 1; min-width: 0; }
+.price-sep { font-size: 13px; color: var(--text-muted); flex-shrink: 0; }
+
+/* Condition pills */
+.condition-pills { display: flex; flex-wrap: wrap; gap: 5px; }
+.condition-pill {
+  padding: 4px 10px; border-radius: 20px;
+  border: 1.5px solid rgba(0,0,0,0.1);
+  background: none; font-size: 11px; font-weight: 600;
+  color: var(--text-secondary); cursor: pointer; transition: all 0.12s;
+}
+.condition-pill:hover { border-color: var(--primary); color: var(--primary); }
+.condition-pill.active { border-color: var(--primary); background: rgba(0,200,224,0.1); color: var(--primary); }
+
+/* Posted pills */
+.posted-pills { display: flex; flex-wrap: wrap; gap: 5px; }
+.posted-pill {
+  padding: 4px 10px; border-radius: 20px;
+  border: 1.5px solid rgba(0,0,0,0.1);
+  background: none; font-size: 11px; font-weight: 600;
+  color: var(--text-secondary); cursor: pointer; transition: all 0.12s;
+}
+.posted-pill:hover { border-color: var(--primary); color: var(--primary); }
+.posted-pill.active { border-color: var(--primary); background: rgba(0,200,224,0.1); color: var(--primary); }
+
+/* Toggle */
+.filter-toggle-row { display: flex; align-items: center; justify-content: space-between; cursor: pointer; }
+.toggle-switch {
+  width: 36px; height: 20px; border-radius: 10px;
+  background: rgba(0,0,0,0.12); position: relative;
+  transition: background 0.2s; cursor: pointer; flex-shrink: 0;
+}
+.toggle-switch.on { background: var(--primary); }
+.toggle-thumb {
+  width: 14px; height: 14px; border-radius: 50%;
+  background: #fff; position: absolute;
+  top: 3px; left: 3px;
+  transition: transform 0.2s;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+.toggle-switch.on .toggle-thumb { transform: translateX(16px); }
+
+/* Autocomplete */
+.autocomplete-wrap { position: relative; }
+.autocomplete-dropdown {
+  position: absolute; z-index: 100; top: calc(100% + 4px); left: 0; right: 0;
+  background: #fff; border: 1px solid rgba(0,0,0,0.1); border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.12); overflow: hidden;
+}
+.autocomplete-group-label { font-size: 10px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.4px; padding: 8px 12px 4px; }
+.autocomplete-item {
+  display: flex; align-items: center; gap: 8px;
+  width: 100%; padding: 8px 12px; text-align: left;
+  background: none; border: none; font-size: 13px;
+  color: var(--text-primary); cursor: pointer;
+  transition: background 0.1s;
+}
+.autocomplete-item:hover { background: rgba(0,200,224,0.06); color: var(--primary); }
+.autocomplete-divider { height: 1px; background: rgba(0,0,0,0.06); margin: 4px 0; }
+
+.filter-btn { width: 100%; justify-content: center; }
+
+/* Main */
+.listings-main {}
+.listings-header { margin-bottom: 16px; }
+.listings-title-row { display: flex; align-items: baseline; gap: 12px; }
+.listings-title-row h1 { font-size: 20px; font-weight: 700; color: var(--text-primary); }
+.results-count { font-size: 13px; color: var(--text-muted); }
+
+.listings-grid-main { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+
+.load-more-wrap { text-align: center; margin-top: 24px; }
+
+.geo-spin-sm {
+  display: inline-block; width: 14px; height: 14px;
+  border: 2px solid rgba(0,0,0,0.1); border-top-color: var(--primary);
+  border-radius: 50%; animation: spin 0.7s linear infinite; vertical-align: middle;
+}
+
+@media (max-width: 900px) { .listings-grid-main { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 768px) {
+  .listings-layout { grid-template-columns: 1fr; }
+  .filters-sidebar { position: static; }
+}
+@media (max-width: 480px) { .listings-grid-main { grid-template-columns: 1fr 1fr; gap: 10px; } }

@@ -1,14 +1,14 @@
 spring:
   application:
-    name: anyneeds
+    name: salepe
   servlet:
     multipart:
       max-file-size: 5MB
       max-request-size: 10MB
   datasource:
-    url: jdbc:postgresql://localhost:5432/anyneeds
-    username: postgres
-    password: postgres
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/anyneeds}
+    username: ${SPRING_DATASOURCE_USERNAME:postgres}
+    password: ${SPRING_DATASOURCE_PASSWORD:postgres}
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
@@ -20,14 +20,14 @@ spring:
         format_sql: true
 
 server:
-  port: 8080
+  port: ${PORT:8080}
 
 anyneeds:
   jwt:
-    secret: anyneeds-secret-key-change-in-production-must-be-256-bits-long-enough
-    expiration-ms: 604800000  # 7 days
+    secret: ${JWT_SECRET:anyneeds-secret-key-change-in-production-must-be-256-bits-long-enough}
+    expiration-ms: 604800000
   otp:
     expiry-minutes: 10
     length: 6
-  upload-dir: ${ANYNEEDS_UPLOAD_DIR:./uploads}
-  base-url: ${ANYNEEDS_BASE_URL:http://localhost:8080}
+  upload-dir: ${UPLOAD_DIR:./uploads}
+  base-url: ${BASE_URL:http://localhost:8080}

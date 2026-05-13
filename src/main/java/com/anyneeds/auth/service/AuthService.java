@@ -20,10 +20,14 @@ public class AuthService {
     }
 
     public AuthResponse verifyOtp(String phoneNumber, String otpCode) {
+        return verifyOtp(phoneNumber, otpCode, null);
+    }
+
+    public AuthResponse verifyOtp(String phoneNumber, String otpCode, String referralCode) {
         boolean valid = otpService.verifyOtp(phoneNumber, otpCode);
         if (!valid) throw new RuntimeException("Invalid or expired OTP");
 
-        User user = userService.findOrCreateUser(phoneNumber);
+        User user = userService.findOrCreateUser(phoneNumber, referralCode);
         String token = jwtUtil.generateToken(user.getId(), user.getPhoneNumber());
 
         return AuthResponse.builder()
