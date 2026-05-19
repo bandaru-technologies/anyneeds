@@ -4,7 +4,7 @@
   background: linear-gradient(135deg, #07111e 0%, #0d2044 100%);
   padding: 72px 0 64px;
   text-align: center;
-  border-bottom: 1px solid rgba(0,200,224,0.1);
+  border-bottom: 1px solid rgba(37,99,235,0.1);
 }
 
 .about-hero-title {
@@ -13,7 +13,7 @@
   line-height: 1.2;
 }
 .about-hero-title span {
-  background: linear-gradient(90deg, #00c8e0, #22d3ee);
+  background: linear-gradient(90deg, #2563eb, #22d3ee);
   -webkit-background-clip: text; -webkit-text-fill-color: transparent;
 }
 
@@ -74,7 +74,7 @@
   width: 24px; height: 24px;
   border-radius: 50%;
   background: var(--primary);
-  color: #07111e;
+  color: #ffffff;
   font-size: 11px; font-weight: 900;
   display: flex; align-items: center; justify-content: center;
 }

@@ -93,7 +93,7 @@
 
 .post-ad-header-btn {
   background: var(--primary);
-  color: #07111e;
+  color: #ffffff;
   font-weight: 700;
   font-size: 13px;
   padding: 8px 16px;
@@ -106,7 +106,7 @@
   align-items: center;
   transition: background 0.15s;
 }
-.post-ad-header-btn:hover { background: var(--primary-dark); color: #07111e; }
+.post-ad-header-btn:hover { background: var(--primary-dark); color: #ffffff; }
 
 .user-menu { position: relative; }
 
@@ -129,7 +129,7 @@
   width: 26px;
   height: 26px;
   background: var(--primary);
-  color: #07111e;
+  color: #ffffff;
   font-weight: 800;
   font-size: 12px;
   border-radius: 50%;

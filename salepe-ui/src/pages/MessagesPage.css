@@ -6,7 +6,7 @@
 }
 .messages-title { font-size: 24px; font-weight: 800; color: var(--text-primary); margin: 0; }
 .messages-count {
-  background: var(--primary); color: #07111e;
+  background: var(--primary); color: #ffffff;
   font-size: 12px; font-weight: 700;
   padding: 2px 8px; border-radius: 20px;
 }
@@ -38,7 +38,7 @@
 
 .conv-avatar {
   width: 44px; height: 44px; border-radius: 50%; flex-shrink: 0;
-  background: linear-gradient(135deg, #00c8e0, #0ea5e9);
+  background: linear-gradient(135deg, #2563eb, #0ea5e9);
   color: #fff; font-size: 18px; font-weight: 700;
   display: flex; align-items: center; justify-content: center;
 }
@@ -75,7 +75,7 @@
   flex: 1;
 }
 .conv-unread {
-  background: var(--primary); color: #07111e;
+  background: var(--primary); color: #ffffff;
   font-size: 10px; font-weight: 800;
   min-width: 18px; height: 18px; border-radius: 9px;
   display: flex; align-items: center; justify-content: center;

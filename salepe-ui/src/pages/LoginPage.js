@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { sendOtp, verifyOtp } from '../services/authService';
 import './LoginPage.css';
@@ -81,9 +81,9 @@ export default function LoginPage() {
   return (
     <div className="login-page">
       <div className="login-card">
-        <div className="login-logo">
+        <Link to="/" className="login-logo" aria-label="Go to home">
           <img src="/salepe-logo.png" alt="Salepe.in" className="login-logo-img" />
-        </div>
+        </Link>
 
         {step === 'phone' ? (
           <>

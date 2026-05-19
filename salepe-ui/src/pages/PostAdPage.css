@@ -30,7 +30,7 @@
   transition: all 0.25s;
   font-size: 18px;
 }
-.step-item.active .step-circle { border-color: var(--primary); background: rgba(0,200,224,0.08); box-shadow: 0 0 0 4px rgba(0,200,224,0.12); }
+.step-item.active .step-circle { border-color: var(--primary); background: rgba(37,99,235,0.08); box-shadow: 0 0 0 4px rgba(37,99,235,0.12); }
 .step-item.done .step-circle { border-color: #22c55e; background: #22c55e; color: #fff; }
 
 .step-label { font-size: 11px; font-weight: 600; color: rgba(0,0,0,0.3); text-transform: uppercase; letter-spacing: 0.3px; }
@@ -75,8 +75,8 @@
   cursor: pointer; transition: all 0.15s; text-align: center;
   position: relative;
 }
-.cat-btn:hover { border-color: var(--primary); background: rgba(0,200,224,0.04); }
-.cat-btn-active { border-color: var(--primary); background: rgba(0,200,224,0.08); }
+.cat-btn:hover { border-color: var(--primary); background: rgba(37,99,235,0.04); }
+.cat-btn-active { border-color: var(--primary); background: rgba(37,99,235,0.08); }
 
 .cat-icon-emoji {
   font-size: 30px;
@@ -86,7 +86,7 @@
   background: rgba(0,0,0,0.05);
   display: flex; align-items: center; justify-content: center;
 }
-.cat-btn-active .cat-icon-emoji { background: rgba(0,200,224,0.12); }
+.cat-btn-active .cat-icon-emoji { background: rgba(37,99,235,0.12); }
 
 .cat-btn-name {
   font-size: 11px; font-weight: 600;
@@ -137,7 +137,7 @@
   gap: 5px; cursor: pointer; width: 100%; height: 100%;
   color: var(--text-muted); transition: background 0.15s; padding: 8px; text-align: center;
 }
-.image-upload-label:hover { background: rgba(0,200,224,0.06); color: var(--primary); }
+.image-upload-label:hover { background: rgba(37,99,235,0.06); color: var(--primary); }
 .image-upload-label small { font-size: 10px; font-weight: 600; }
 
 .image-preview { position: relative; width: 100%; height: 100%; }
@@ -153,7 +153,7 @@
 
 .cover-badge {
   position: absolute; bottom: 4px; left: 4px;
-  background: var(--primary); color: #07111e;
+  background: var(--primary); color: #ffffff;
   font-size: 9px; font-weight: 700; padding: 2px 6px;
   border-radius: 3px; text-transform: uppercase;
 }
@@ -199,7 +199,7 @@
 .btn-wizard-back:hover { border-color: rgba(0,0,0,0.3); color: var(--text-primary); }
 
 .btn-wizard-next {
-  background: var(--primary); border: none; color: #07111e;
+  background: var(--primary); border: none; color: #ffffff;
   font-size: 14px; font-weight: 700; padding: 12px 28px;
   border-radius: 8px; cursor: pointer; transition: background 0.15s;
   display: flex; align-items: center; gap: 6px;

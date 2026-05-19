@@ -27,8 +27,8 @@
 .storefront-avatar {
   width: 88px; height: 88px;
   border-radius: 20px;
-  background: linear-gradient(135deg, #00c8e0, #0ea5e9);
-  color: #07111e;
+  background: linear-gradient(135deg, #2563eb, #0ea5e9);
+  color: #ffffff;
   font-size: 38px; font-weight: 900;
   display: flex; align-items: center; justify-content: center;
   flex-shrink: 0;
@@ -80,7 +80,7 @@
 .storefront-follow-btn {
   padding: 10px 24px;
   background: var(--primary);
-  color: #07111e;
+  color: #ffffff;
   border: 1.5px solid var(--primary);
   border-radius: 10px;
   font-size: 14px; font-weight: 700;
@@ -149,7 +149,7 @@
   display: flex; align-items: center; gap: 10px; margin: 0;
 }
 .storefront-count {
-  background: var(--primary); color: #07111e;
+  background: var(--primary); color: #ffffff;
   font-size: 12px; font-weight: 700;
   padding: 2px 8px; border-radius: 20px;
 }

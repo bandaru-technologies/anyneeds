@@ -21,11 +21,11 @@
 
 .profile-avatar-large {
   width: 64px; height: 64px; border-radius: 50%;
-  background: rgba(0,200,224,0.12); color: var(--primary);
+  background: rgba(37,99,235,0.12); color: var(--primary);
   font-size: 26px; font-weight: 800;
   display: flex; align-items: center; justify-content: center;
   margin: 0 auto 12px;
-  border: 2px solid rgba(0,200,224,0.25);
+  border: 2px solid rgba(37,99,235,0.25);
 }
 
 .profile-sidebar-name { font-size: 15px; font-weight: 700; color: var(--text-primary); margin: 0 0 4px; }
@@ -40,7 +40,7 @@
   background: none; border: none; width: 100%; text-align: left;
 }
 .sidebar-nav-item:hover { background: rgba(0,0,0,0.03); color: var(--text-primary); }
-.sidebar-nav-item.active { background: rgba(0,200,224,0.08); color: var(--primary); font-weight: 600; }
+.sidebar-nav-item.active { background: rgba(37,99,235,0.08); color: var(--primary); font-weight: 600; }
 .sidebar-nav-item.danger { color: #ef4444; }
 .sidebar-nav-item.danger:hover { background: rgba(239,68,68,0.06); }
 .sidebar-divider { border: none; border-top: 1px solid rgba(0,0,0,0.06); margin: 4px 0; }

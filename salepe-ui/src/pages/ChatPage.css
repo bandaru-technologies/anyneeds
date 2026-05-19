@@ -27,7 +27,7 @@
 
 .chat-header-avatar {
   width: 38px; height: 38px; border-radius: 50%; flex-shrink: 0;
-  background: linear-gradient(135deg, #00c8e0, #0ea5e9);
+  background: linear-gradient(135deg, #2563eb, #0ea5e9);
   color: #fff; font-size: 16px; font-weight: 700;
   display: flex; align-items: center; justify-content: center;
 }
@@ -85,7 +85,7 @@
 }
 .msg-mine .msg-bubble {
   background: var(--primary);
-  color: #07111e;
+  color: #ffffff;
   border-bottom-right-radius: 4px;
 }
 .msg-theirs .msg-bubble {
@@ -134,7 +134,7 @@
 .chat-send-btn {
   width: 42px; height: 42px; border-radius: 50%; flex-shrink: 0;
   background: var(--primary); border: none;
-  color: #07111e; cursor: pointer;
+  color: #ffffff; cursor: pointer;
   display: flex; align-items: center; justify-content: center;
   transition: all 0.15s;
 }

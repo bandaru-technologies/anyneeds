@@ -6,7 +6,7 @@
   background: linear-gradient(135deg, #0a1628 0%, #0d2044 100%);
   border-radius: 20px;
   margin-bottom: 32px;
-  border: 1px solid rgba(0,200,224,0.15);
+  border: 1px solid rgba(37,99,235,0.15);
 }
 
 .referral-hero-icon { font-size: 48px; margin-bottom: 12px; }
@@ -14,7 +14,7 @@
 .referral-hero-title {
   font-size: 32px; font-weight: 900;
   color: #fff; margin: 0 0 12px;
-  background: linear-gradient(90deg, #00c8e0, #22d3ee);
+  background: linear-gradient(90deg, #2563eb, #22d3ee);
   -webkit-background-clip: text; -webkit-text-fill-color: transparent;
 }
 
@@ -22,7 +22,7 @@
   font-size: 16px; color: rgba(255,255,255,0.72);
   max-width: 480px; margin: 0 auto; line-height: 1.6;
 }
-.referral-hero-sub strong { color: #00c8e0; -webkit-text-fill-color: #00c8e0; }
+.referral-hero-sub strong { color: #2563eb; -webkit-text-fill-color: #2563eb; }
 
 /* Code card */
 .referral-code-card {
@@ -44,8 +44,8 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: rgba(0,200,224,0.08);
-  border: 2px dashed rgba(0,200,224,0.35);
+  background: rgba(37,99,235,0.08);
+  border: 2px dashed rgba(37,99,235,0.35);
   border-radius: 12px;
   padding: 14px 36px;
   margin-bottom: 10px;
@@ -138,7 +138,7 @@
   width: 32px; height: 32px;
   border-radius: 50%;
   background: var(--primary);
-  color: #07111e;
+  color: #ffffff;
   font-size: 14px; font-weight: 900;
   display: flex; align-items: center; justify-content: center;
   flex-shrink: 0;

@@ -48,7 +48,7 @@
   text-decoration: none;
   transition: all 0.2s;
 }
-.social-btn:hover { background: rgba(0,200,224,0.15); color: #00c8e0; border-color: rgba(0,200,224,0.3); }
+.social-btn:hover { background: rgba(37,99,235,0.15); color: #2563eb; border-color: rgba(37,99,235,0.3); }
 
 .footer-col {}
 
@@ -73,7 +73,7 @@
   text-decoration: none;
   transition: color 0.15s;
 }
-.footer-links a:hover { color: #00c8e0; }
+.footer-links a:hover { color: #2563eb; }
 
 .footer-bottom {
   border-top: 1px solid rgba(255,255,255,0.06);
