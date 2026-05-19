@@ -2,7 +2,7 @@
 
 /* Hero — keeps dark bg for visual impact */
 .hero {
-  background: linear-gradient(135deg, #07111e 0%, #0d1b3e 60%, #142250 100%);
+  background: #07111e;
   padding: 20px 0 18px;
   position: relative;
   overflow: hidden;
@@ -320,7 +320,7 @@
 
 /* CTA */
 .cta-section {
-  background: linear-gradient(135deg, #07111e, #0d1b3e);
+  background: #07111e;
   border-top: 1px solid rgba(37,99,235,0.15);
   padding: 48px 0;
 }
