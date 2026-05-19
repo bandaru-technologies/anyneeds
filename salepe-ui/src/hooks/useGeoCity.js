@@ -28,9 +28,6 @@ async function reverseGeocode(lat, lon) {
 
   const state = addr.state || '';
 
-  // "Kalyan Nagar, Bengaluru" or just "Bengaluru"
-  const display = locality && city ? `${locality}, ${city}` : city;
-
   const normalizedCity = normalizeCity(city);
   const normalizedDisplay = locality && normalizedCity ? `${locality}, ${normalizedCity}` : normalizedCity;
   return { city: normalizedCity, locality, state, display: normalizedDisplay };
